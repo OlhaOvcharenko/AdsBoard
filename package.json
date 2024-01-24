@@ -5,6 +5,8 @@
   "author": "<ovcharenko.olga.2014@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2"
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^8.1.0"
   }
 }
