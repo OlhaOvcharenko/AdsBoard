@@ -28,6 +28,9 @@ const server = app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
 
+const adsRoutes = require('./routes/ads.routes');
+
+app.use('/api', adsRoutes);
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
