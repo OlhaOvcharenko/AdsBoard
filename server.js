@@ -31,7 +31,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 const adsRoutes = require('./routes/ads.routes');
+const authRoutes = require('./routes/auth.routes');
+
 app.use('/api', adsRoutes);
+app.use('/auth', authRoutes);
 
 // Serve static files
 // app.use(express.static(path.join(__dirname, '/client/build')));
