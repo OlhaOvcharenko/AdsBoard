@@ -47,13 +47,16 @@ exports.getBySearchPhrase = async(req, res) => {
 
 exports.postNewAd = async (req, res) => {
   try {
-    console.log('Request Body:', req.body); // Log the request body for debugging
+    
+    if (req.session.login){
+      const { title, description, date, photo, price, location, author } = req.body;
 
-    const { title, description, date, photo, price, location, author } = req.body;
-
-    const newAd = new Ad({ title, description, date, photo, price, location, author });
-    await newAd.save();
-    res.json({ message: 'OK' });
+      const newAd = new Ad({ title, description, date, photo, price, location, author });
+      await newAd.save();
+      res.json({ message: 'OK' });
+    } else {
+      res.status(401).send({ message: "You are not authorized."});
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error', message: err.message });
@@ -85,8 +88,6 @@ exports.editAd = async(req, res) => {
     res.status(500).json({ message: err });
   }
 };
-
-
 
 exports.deleteAd = async(req, res) => {
   try{
