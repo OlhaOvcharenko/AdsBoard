@@ -102,5 +102,6 @@ exports.deleteAd = async(req, res) => {
 
 
 //add populate 
+//apply fs.ulinkSynk to other methods
 //data validation
 //tests??
