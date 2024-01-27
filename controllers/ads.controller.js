@@ -48,15 +48,12 @@ exports.getBySearchPhrase = async(req, res) => {
 exports.postNewAd = async (req, res) => {
   try {
     
-    if (req.session.login){
-      const { title, description, date, photo, price, location, author } = req.body;
+    const { title, description, date, photo, price, location, author } = req.body;
 
-      const newAd = new Ad({ title, description, date, photo, price, location, author });
-      await newAd.save();
-      res.json({ message: 'OK' });
-    } else {
-      res.status(401).send({ message: "You are not authorized."});
-    }
+    const newAd = new Ad({ title, description, date, photo, price, location, author });
+    await newAd.save();
+    res.json({ message: 'OK' });
+  
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error', message: err.message });
