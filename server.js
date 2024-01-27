@@ -31,7 +31,7 @@ db.once('open', () => {
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(session({secret:'xyz567', store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false}));
+app.use(session({secret: process.env.secret, store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false}));
 
 const adsRoutes = require('./routes/ads.routes');
 const authRoutes = require('./routes/auth.routes');

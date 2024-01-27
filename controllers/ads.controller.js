@@ -101,4 +101,6 @@ exports.deleteAd = async(req, res) => {
 };
 
 
-//add populate method
+//add populate 
+//data validation
+//tests??
