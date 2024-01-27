@@ -1,5 +1,6 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
+const Session = require('../models/session.model');
 
 exports.register = async (req, res) => {
   try {
@@ -73,4 +74,20 @@ exports.login = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   res.send("Yeh, I/m logged!")
+};
+
+exports.logout = async (req, res) => {
+  try {
+    
+    req.session.destroy();
+
+    if (process.env.NODE_ENV !== "production") {
+    await Session.deleteMany({});
+    }
+    res.status(200).send({ message: "Logout successful." });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+  }
 };
