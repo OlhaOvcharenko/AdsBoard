@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');//????
+const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
+const session = require("express-session");
 
 const app = express();
 
@@ -29,9 +31,11 @@ db.once('open', () => {
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(session({secret:'xyz567', store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false}));
 
 const adsRoutes = require('./routes/ads.routes');
 const authRoutes = require('./routes/auth.routes');
+const { connect } = require('http2');
 
 app.use('/api', adsRoutes);
 app.use('/auth', authRoutes);
