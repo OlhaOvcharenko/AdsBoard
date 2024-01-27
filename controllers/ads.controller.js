@@ -3,7 +3,7 @@ const Ad = require('../models/ad.model');
 
 exports.getAll = async(req, res) => {
   try {
-    const ads = await Ad.find();
+    const ads = await Ad.find().populate('author');
     res.json(ads);
   } catch (err) {
     res.status(500).json({ message: err });
@@ -12,7 +12,7 @@ exports.getAll = async(req, res) => {
 
 exports.getById = async(req, res) => {
   try {
-    const adById = await Ad.findById(req.params.id);
+    const adById = await Ad.findById(req.params.id).populate('author');
 
     if(!adById) { 
       res.status(404).json({message: 'Not found..'});
