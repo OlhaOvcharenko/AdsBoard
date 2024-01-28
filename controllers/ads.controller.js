@@ -1,5 +1,7 @@
 const Ad = require('../models/ad.model');
-
+const fs = require('fs');
+const getImageFileType = require('../utils/getImageFileType');
+const User = require('../models/user.model');
 
 exports.getAll = async(req, res) => {
   try {
@@ -25,19 +27,19 @@ exports.getById = async(req, res) => {
   }
 };
 
-exports.getBySearchPhrase = async(req, res) => {
-  
+exports.getBySearchPhrase = async(req, res) => { 
   try {
     const searchPhrase = req.params.searchPhrase;
     const sanitizedSearchPhrase = searchPhrase.replace(/\+/g, ' ');
-    const adsByTitle = await Ad.find({
-      title: { $regex: new RegExp(sanitizedSearchPhrase, 'i') }
+    const adsByPhrase = await Ad.find({
+      title: { $regex: new RegExp(sanitizedSearchPhrase, 'i'),
+      }
     });
 
-    if (adsByTitle.length === 0) {
+    if (adsByPhrase.length === 0) {
       res.status(404).json({ message: 'Not found..' });
     } else {
-      res.json(adsByTitle);
+      res.json(adsByPhrase);
     }
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
@@ -47,13 +49,37 @@ exports.getBySearchPhrase = async(req, res) => {
 
 exports.postNewAd = async (req, res) => {
   try {
-    
-    const { title, description, date, photo, price, location, author } = req.body;
+    const { title, description, date, price, location, author } = req.body;
+    const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
+    if (
+      title && typeof title === 'string' &&
+      description && typeof description === 'string' &&
+      location && typeof location === 'string' &&
+      author && typeof author === 'string' &&
+      date && /^\d{4}-\d{2}-\d{2}$/.test(date) &&
+      price && !isNaN(price) &&
+      req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+     ) {
+      const newAd = new Ad({
+        title,
+        description,
+        date,
+        price: Number(price),
+        location,
+        photo: req.file.filename,
+        author: req.session.user.id,    
+      });
 
-    const newAd = new Ad({ title, description, date, photo, price, location, author });
-    await newAd.save();
-    res.json({ message: 'OK' });
-  
+      await newAd.save();
+      res.json({ message: 'Post has been created!' });
+
+    } else {
+      const path = req.file ? req.file.path : null;
+      if (path) {
+        fs.unlinkSync(path);
+      }
+      res.status(400).json({ message: 'Bad Request' });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error', message: err.message });
@@ -101,7 +127,9 @@ exports.deleteAd = async(req, res) => {
 };
 
 
-//add populate 
 //apply fs.ulinkSynk to other methods
 //data validation
+//edition of post
+// dostep do obrazkuw 
 //tests??
+//JohnDoe, tester345

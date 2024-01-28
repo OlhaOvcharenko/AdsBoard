@@ -36,7 +36,10 @@ exports.register = async (req, res) => {
       });
       res.status(201).send({ message: 'User created ' + user.login });
     } else {
-      fs.unlinkSync(req.file.path);
+      const path = req.file ? req.file.path : null;
+      if (path) {
+        fs.unlinkSync(path);
+      }
       res.status(400).json({ message: 'Bad Request' });
     }
   } catch (err) {
@@ -48,6 +51,8 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { login, password } = req.body;
+
+    console.log(login, password);
 
     if (login && typeof login === "string" && password && typeof password === "string") {
 
@@ -72,7 +77,6 @@ exports.login = async (req, res) => {
           res.status(200).send({ message: "Login succesful." });
 
         } else {
-
           res.status(400).send({ message: "Login or password are incorrect." });
         }
 
@@ -90,7 +94,7 @@ exports.login = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  res.send("Yeh, I/m logged!")
+  res.send("Yeh, I/m logged!"  )
 };
 
 exports.logout = async (req, res) => {
