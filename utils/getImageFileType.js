@@ -1,28 +1,15 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const getImageFileType = async (image) => {
-
-  // Determine header bytes
-  const determineHeader = () => new Promise((resolve, reject) => {
-    try {
-      const file = fs.readFileSync(image.path, null).buffer;
-      const arr = (new Uint8Array(file)).subarray(0, 4);
-      const header = arr.reduce((result, byte) => result + byte.toString(16), '');
-      resolve(header);
-    }
-    catch (err) {
-      reject(err);
-    }
-  });
-
   try {
-    const header = await determineHeader()
+    const file = await fs.readFile(image.path, { encoding: null });
+    const header = file.toString('hex', 0, 4);
 
-    switch(header) {
+    switch (header) {
       case '89504e47':
         return 'image/png';
       case '47494638':
-        return "image/gif";
+        return 'image/gif';
       case 'ffd8ffe0':
       case 'ffd8ffe1':
       case 'ffd8ffe2':
@@ -32,9 +19,10 @@ const getImageFileType = async (image) => {
       default:
         return 'unknown';
     }
-  } catch(err) {
+  } catch (err) {
+    console.error('Error reading file:', err);
     return 'unknown';
   }
-}
+};
 
 module.exports = getImageFileType;

@@ -10,30 +10,39 @@ exports.register = async (req, res) => {
 
     const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
 
+    console.log(login, password, fileType, phoneNumber)
 
-    if (login && typeof login === "string" && password && typeof password === "string" && req.file && ['image/jpg', 'image/jpeg', 'image/gif']. includes(fileType)) {
+    if (
+      login &&
+      typeof login === 'string' &&
+      password &&
+      typeof password === 'string' &&
+      req.file &&
+      ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+    ) {
       const userWithLogin = await User.findOne({ login });
 
       if (userWithLogin) {
+        console.log(req.file);
         fs.unlinkSync(req.file.path);
-        return res.status(409).send({ message: "User with this login already exists" });
-        
+        return res.status(409).send({ message: 'User with this login already exists' });
       }
 
-      const user = await User.create({ login, password: await bcrypt.hash(password, 10), avatar: req.file.fileName, phoneNumber });
-      res.status(201).send({ message: "User created" + user.login });
-        
+      const user = await User.create({
+        login,
+        password: await bcrypt.hash(password, 10),
+        avatar: req.file.filename, // Use req.file.filename to get the file name
+        phoneNumber,
+      });
+      res.status(201).send({ message: 'User created ' + user.login });
     } else {
       fs.unlinkSync(req.file.path);
       res.status(400).json({ message: 'Bad Request' });
-      
-
     }
-
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Internal Server Error', message: err.message });
-    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+  }
 };
 
 exports.login = async (req, res) => {
