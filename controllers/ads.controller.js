@@ -129,23 +129,31 @@ exports.editAd = async(req, res) => {
 
 
 exports.deleteAd = async(req, res) => {
-  try{
-    const ad = await Ad.findById(req.params.id)
-    if(ad){
-    await Ad.deleteOne({ _id: req.params.id })
-    res.json({message:"OK"})
+  try {
+    const ad = await Ad.findById(req.params.id);
+    if (ad) {
+      const photoPath = path.resolve(`public/uploads/${ad.photo}`);
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      } else {
+        console.error('File does not exist:', photoPath);
+      }
+
+      await Ad.deleteOne({ _id: req.params.id });
+      res.json({ message: 'OK' });
+    } else {
+      res.status(404).json({ message: 'Not found...' });
     }
-    else res.status(404).json({ message: 'Not found...' });
-  }
-  catch(err) {
-    res.status(500).json({ message: err });
+  } catch (err) {
+    console.error('Error deleting ad:', err);
+    res.status(500).json({ message: err.message });
   }
 };
 
 
-//apply fs.ulinkSynk to other methods
 //data validation
-//edition of post
+
 // dostep do obrazkuw 
-//tests??
+
 //JohnDoe, tester345
