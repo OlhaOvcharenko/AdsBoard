@@ -14,11 +14,8 @@ exports.register = async (req, res) => {
 
     if (
       login &&
-      typeof login === 'string' &&
-      password &&
-      typeof password === 'string' &&
-      req.file &&
-      ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+      typeof login === 'string' && password && typeof password === 'string' &&
+      phoneNumber && phoneNumber == 'number' && req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
     ) {
       const userWithLogin = await User.findOne({ login });
 
@@ -31,15 +28,13 @@ exports.register = async (req, res) => {
       const user = await User.create({
         login,
         password: await bcrypt.hash(password, 10),
-        avatar: req.file.filename, // Use req.file.filename to get the file name
-        phoneNumber,
+        avatar: req.file.filename,
+        phoneNumber: Number(phoneNumber),
       });
       res.status(201).send({ message: 'User created ' + user.login });
     } else {
       const path = req.file ? req.file.path : null;
-      if (path) {
-        fs.unlinkSync(path);
-      }
+      fs.unlinkSync(path);
       res.status(400).json({ message: 'Bad Request' });
     }
   } catch (err) {

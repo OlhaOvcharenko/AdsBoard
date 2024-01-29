@@ -150,9 +150,3 @@ exports.deleteAd = async(req, res) => {
   }
 };
 
-
-//data validation
-
-// dostep do obrazkuw 
-
-//JohnDoe, tester345
