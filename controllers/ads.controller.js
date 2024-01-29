@@ -95,12 +95,12 @@ exports.editAd = async(req, res) => {
     const ad = await Ad.findById(req.params.id);
 
     if (ad) {
-      const oldPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
+      const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
 
-      if (fs.existsSync(oldPhotoPath)) {
-        fs.unlinkSync(oldPhotoPath);
+      if (fs.existsSync(prevPhotoPath)) {
+        fs.unlinkSync(prevPhotoPath);
       } else {
-        console.error('File does not exist:', oldPhotoPath);
+        console.error('File does not exist:', prevPhotoPath);
       }
 
       if (
@@ -139,7 +139,6 @@ exports.deleteAd = async(req, res) => {
       } else {
         console.error('File does not exist:', photoPath);
       }
-
       await Ad.deleteOne({ _id: req.params.id });
       res.json({ message: 'OK' });
     } else {
