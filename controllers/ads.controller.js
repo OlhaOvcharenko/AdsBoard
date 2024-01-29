@@ -1,5 +1,6 @@
 const Ad = require('../models/ad.model');
 const fs = require('fs');
+const path =require('path');
 const getImageFileType = require('../utils/getImageFileType');
 const User = require('../models/user.model');
 
@@ -87,30 +88,45 @@ exports.postNewAd = async (req, res) => {
 };
 
 exports.editAd = async(req, res) => {
-
-  const { title, description, date, photo, price, location, author } = req.body;
   try {
+    const { title, description, date, price, location, author } = req.body;
+    const photo = req.file.filename;
+		const fileType = req.file ? await getImageFileType(req.file) : 'unknokwn';
     const ad = await Ad.findById(req.params.id);
 
     if (ad) {
-      ad.title = title;
-      ad.description = description;
-      ad.date = date;
-      ad.photo = photo;
-      ad.price = price;
-      ad.location = location;
-      ad.author = author;
+      const oldPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
 
-      await ad.save(); // Use await with save()
+      if (fs.existsSync(oldPhotoPath)) {
+        fs.unlinkSync(oldPhotoPath);
+      } else {
+        console.error('File does not exist:', oldPhotoPath);
+      }
 
-      res.json({ message: 'OK' });
+      if (
+        title && typeof title === 'string' &&
+        description && typeof description === 'string' && location && typeof location === 'string' &&
+        author && typeof author === 'string' && date && /^\d{4}-\d{2}-\d{2}$/.test(date) && price && !isNaN(price) &&
+        req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+      ) {
+        await ad.updateOne({ $set: { title, description, date, photo, location, author: req.session.user.id, price } });
+        res.json({ message: 'OK' });
+
+      } else {
+        const path = req.file ? req.file.path : null;
+        fs.unlinkSync(path);
+        res.status(400).json({ message: 'Bad Request' });
+      }
     } else {
+      const path = req.file ? req.file.path : null;
+      fs.unlinkSync(path);
       res.status(404).json({ message: 'Not found...' });
     }
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err.message });
   }
 };
+
 
 exports.deleteAd = async(req, res) => {
   try{
