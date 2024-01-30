@@ -13,9 +13,8 @@ exports.register = async (req, res) => {
     console.log(login, password, fileType, phoneNumber)
 
     if (
-      login &&
-      typeof login === 'string' && password && typeof password === 'string' &&
-      phoneNumber && phoneNumber == 'number' && req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+      login && typeof login === 'string' && password && typeof password === 'string' &&
+      phoneNumber && !isNaN(phoneNumber) && req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
     ) {
       const userWithLogin = await User.findOne({ login });
 
@@ -89,7 +88,7 @@ exports.login = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  res.send("Yeh, I/m logged!"  )
+  res.send("Yeh, I/m logged!" + req.session.user.login )
 };
 
 exports.logout = async (req, res) => {

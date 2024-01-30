@@ -2,6 +2,7 @@ const Ad = require('../models/ad.model');
 const fs = require('fs');
 const path =require('path');
 const getImageFileType = require('../utils/getImageFileType');
+const sanitizeHtml = require('sanitize-html');
 const User = require('../models/user.model');
 
 exports.getAll = async(req, res) => {
@@ -52,14 +53,15 @@ exports.postNewAd = async (req, res) => {
   try {
     const { title, description, date, price, location, author } = req.body;
     const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
+    const cleanTitle = sanitizeHtml(title);
+    const cleanDescription = sanitizeHtml(description);
+    const cleanLocation = sanitizeHtml(location);
+    const cleanAuthor = sanitizeHtml(author);
     if (
-      title && typeof title === 'string' &&
-      description && typeof description === 'string' &&
-      location && typeof location === 'string' &&
-      author && typeof author === 'string' &&
-      date && /^\d{4}-\d{2}-\d{2}$/.test(date) &&
-      price && !isNaN(price) &&
-      req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+      cleanTitle && typeof cleanTitle === 'string' &&
+      cleanDescription && typeof  cleanDescription === 'string' && cleanLocation && typeof cleanLocation === 'string' &&
+      cleanAuthor && typeof cleanAuthor === 'string' &&  date && (typeof date === 'string' || date instanceof Date) &&
+      price && !isNaN(price) && req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
      ) {
       const newAd = new Ad({
         title,
@@ -103,11 +105,15 @@ exports.editAd = async(req, res) => {
         console.error('File does not exist:', prevPhotoPath);
       }
 
+      const cleanTitle = sanitizeHtml(title);
+      const cleanDescription = sanitizeHtml(description);
+      const cleanLocation = sanitizeHtml(location);
+      const cleanAuthor = sanitizeHtml(author);
       if (
-        title && typeof title === 'string' &&
-        description && typeof description === 'string' && location && typeof location === 'string' &&
-        author && typeof author === 'string' && date && /^\d{4}-\d{2}-\d{2}$/.test(date) && price && !isNaN(price) &&
-        req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
+        cleanTitle && typeof cleanTitle === 'string' &&
+        cleanDescription && typeof  cleanDescription === 'string' && cleanLocation && typeof cleanLocation === 'string' &&
+        cleanAuthor && typeof cleanAuthor === 'string' &&  date && (typeof date === 'string' || date instanceof Date) &&
+        price && !isNaN(price) && req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
       ) {
         await ad.updateOne({ $set: { title, description, date, photo, location, author: req.session.user.id, price } });
         res.json({ message: 'OK' });
