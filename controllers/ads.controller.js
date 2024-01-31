@@ -3,7 +3,7 @@ const fs = require('fs');
 const path =require('path');
 const getImageFileType = require('../utils/getImageFileType');
 const sanitizeHtml = require('sanitize-html');
-const User = require('../models/user.model');
+const schemaValidation = require('../utils/schemaValidation');
 
 exports.getAll = async(req, res) => {
   try {
@@ -38,13 +38,13 @@ exports.getBySearchPhrase = async(req, res) => {
       }
     });
 
-    if (adsByPhrase.length === 0) {
+    if (!adsByPhrase.length) {
       res.status(404).json({ message: 'Not found..' });
     } else {
       res.json(adsByPhrase);
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+    res.status(500).json({ error: 'Bad requesr', message: error.message });
   }
 }
 
@@ -53,16 +53,17 @@ exports.postNewAd = async (req, res) => {
   try {
     const { title, description, date, price, location, author } = req.body;
     const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
+  
     const cleanTitle = sanitizeHtml(title);
     const cleanDescription = sanitizeHtml(description);
     const cleanLocation = sanitizeHtml(location);
+    const cleanDate = sanitizeHtml(date);
     const cleanAuthor = sanitizeHtml(author);
-    if (
-      cleanTitle && typeof cleanTitle === 'string' &&
-      cleanDescription && typeof  cleanDescription === 'string' && cleanLocation && typeof cleanLocation === 'string' &&
-      cleanAuthor && typeof cleanAuthor === 'string' &&  date && (typeof date === 'string' || date instanceof Date) &&
-      price && !isNaN(price) && req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
-     ) {
+
+    const validatedData = await schemaValidation.validateAsync({cleanTitle, cleanDescription, 
+      cleanLocation, cleanAuthor, cleanDate, price, fileType});
+    
+    if(validatedData) {
       const newAd = new Ad({
         title,
         description,
@@ -75,17 +76,16 @@ exports.postNewAd = async (req, res) => {
 
       await newAd.save();
       res.json({ message: 'Post has been created!' });
-
     } else {
       const path = req.file ? req.file.path : null;
-      if (path) {
-        fs.unlinkSync(path);
-      }
-      res.status(400).json({ message: 'Bad Request' });
+      fs.unlinkSync(path);
+      res.status(400).json({ error: 'Field validation'});
     }
   } catch (err) {
+    const path = req.file ? req.file.path : null;
+    fs.unlinkSync(path);
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    res.status(400).json({ error: 'Bad Request', message: err.message });
   }
 };
 
