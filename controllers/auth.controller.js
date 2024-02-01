@@ -10,6 +10,10 @@ exports.register = async (req, res) => {
 
     const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
 
+    if (!req.file) {
+      res.status(400).json({ message: 'Failed file type validation.' });
+      return;
+    }
     console.log(login, password, fileType, phoneNumber)
 
     if (
@@ -34,11 +38,13 @@ exports.register = async (req, res) => {
     } else {
       const path = req.file ? req.file.path : null;
       fs.unlinkSync(path);
-      res.status(400).json({ message: 'Bad Request' });
+      res.status(400).json({ message: 'Failed validation' });
     }
   } catch (err) {
+    const path = req.file ? req.file.path : null;
+    fs.unlinkSync(path);
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    res.status(400).json({ error: 'Bad Request', message: err.message });
   }
 };
 
@@ -77,12 +83,12 @@ exports.login = async (req, res) => {
       }
         
     } else {
-      res.status(400).json({ message: 'Bad Request' });
+      res.status(400).json({ message: 'Failed validation' });
     }
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    res.status(400).json({ error: 'Bad request', message: err.message });
   }
   
 };
@@ -103,6 +109,6 @@ exports.logout = async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    res.status(400).json({ error: 'Bad request', message: err.message });
   }
 };

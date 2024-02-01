@@ -3,7 +3,7 @@ const fs = require('fs');
 const path =require('path');
 const getImageFileType = require('../utils/getImageFileType');
 const sanitizeHtml = require('sanitize-html');
-const User = require('../models/user.model');
+const schemaValidation = require('../utils/schemaValidation');
 
 exports.getAll = async(req, res) => {
   try {
@@ -38,31 +38,35 @@ exports.getBySearchPhrase = async(req, res) => {
       }
     });
 
-    if (adsByPhrase.length === 0) {
+    if (!adsByPhrase.length) {
       res.status(404).json({ message: 'Not found..' });
     } else {
       res.json(adsByPhrase);
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+    res.status(500).json({ error: 'Bad request', message: error.message });
   }
 }
-
 
 exports.postNewAd = async (req, res) => {
   try {
     const { title, description, date, price, location, author } = req.body;
     const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
+    if (!req.file) {
+      res.status(400).json({ message: 'Failed file type validation.' });
+      return;
+    }
+   
     const cleanTitle = sanitizeHtml(title);
     const cleanDescription = sanitizeHtml(description);
     const cleanLocation = sanitizeHtml(location);
+    const cleanDate = sanitizeHtml(date);
     const cleanAuthor = sanitizeHtml(author);
-    if (
-      cleanTitle && typeof cleanTitle === 'string' &&
-      cleanDescription && typeof  cleanDescription === 'string' && cleanLocation && typeof cleanLocation === 'string' &&
-      cleanAuthor && typeof cleanAuthor === 'string' &&  date && (typeof date === 'string' || date instanceof Date) &&
-      price && !isNaN(price) && req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
-     ) {
+
+    const validatedData = await schemaValidation.validateAsync({cleanTitle, cleanDescription, 
+      cleanLocation, cleanAuthor, cleanDate, price, fileType});
+    
+    if(validatedData) {
       const newAd = new Ad({
         title,
         description,
@@ -75,17 +79,16 @@ exports.postNewAd = async (req, res) => {
 
       await newAd.save();
       res.json({ message: 'Post has been created!' });
-
     } else {
       const path = req.file ? req.file.path : null;
-      if (path) {
-        fs.unlinkSync(path);
-      }
-      res.status(400).json({ message: 'Bad Request' });
+      fs.unlinkSync(path);
+      res.status(400).json({ error: 'Failed validation'});
     }
   } catch (err) {
+    const path = req.file ? req.file.path : null;
+    fs.unlinkSync(path);
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    res.status(400).json({ error: 'Bad Request', message: err.message });
   }
 };
 
@@ -93,50 +96,62 @@ exports.editAd = async(req, res) => {
   try {
     const { title, description, date, price, location, author } = req.body;
     const photo = req.file.filename;
-		const fileType = req.file ? await getImageFileType(req.file) : 'unknokwn';
+		const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
+
+    if (!req.file) {
+      res.status(400).json({ message: 'Failed file type validation.' });
+      return;
+    }
+
     const ad = await Ad.findById(req.params.id);
 
-    if (ad) {
-      const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
+    if(req.session.user.id == ad.author.id){
 
-      if (fs.existsSync(prevPhotoPath)) {
-        fs.unlinkSync(prevPhotoPath);
-      } else {
-        console.error('File does not exist:', prevPhotoPath);
-      }
+      if (ad) {
+        const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
 
-      const cleanTitle = sanitizeHtml(title);
-      const cleanDescription = sanitizeHtml(description);
-      const cleanLocation = sanitizeHtml(location);
-      const cleanAuthor = sanitizeHtml(author);
-      if (
-        cleanTitle && typeof cleanTitle === 'string' &&
-        cleanDescription && typeof  cleanDescription === 'string' && cleanLocation && typeof cleanLocation === 'string' &&
-        cleanAuthor && typeof cleanAuthor === 'string' &&  date && (typeof date === 'string' || date instanceof Date) &&
-        price && !isNaN(price) && req.file && ['image/jpg', 'image/jpeg', 'image/gif'].includes(fileType)
-      ) {
-        await ad.updateOne({ $set: { title, description, date, photo, location, author: req.session.user.id, price } });
-        res.json({ message: 'OK' });
+        if (fs.existsSync(prevPhotoPath)) {
+          fs.unlinkSync(prevPhotoPath);
+        } else {
+          console.error('File does not exist:', prevPhotoPath);
+        }
 
+        const cleanTitle = sanitizeHtml(title);
+        const cleanDescription = sanitizeHtml(description);
+        const cleanLocation = sanitizeHtml(location);
+        const cleanDate = sanitizeHtml(date);
+        const cleanAuthor = sanitizeHtml(author);
+
+        const validatedData = await schemaValidation.validateAsync({cleanTitle, cleanDescription, 
+        cleanLocation, cleanAuthor, cleanDate, price, fileType});
+
+        if(validatedData) {
+          await ad.updateOne({ $set: { title, description, date, photo, location, author: req.session.user.id, price } });
+          res.json({ message: 'OK' });
+        } else {
+          const path = req.file ? req.file.path : null;
+          fs.unlinkSync(path);
+          res.status(400).json({ message: 'Failed validation' });
+        }
       } else {
         const path = req.file ? req.file.path : null;
         fs.unlinkSync(path);
-        res.status(400).json({ message: 'Bad Request' });
+        res.status(404).json({ message: 'Not found...' });
       }
     } else {
-      const path = req.file ? req.file.path : null;
-      fs.unlinkSync(path);
-      res.status(404).json({ message: 'Not found...' });
+      res.status(400).json({ message: 'You are not authorized' });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    const path = req.file ? req.file.path : null;
+    fs.unlinkSync(path);
+    res.status(400).json({ error: 'Bad Request', message: err.message });
   }
 };
 
 
 exports.deleteAd = async(req, res) => {
   try {
-    const ad = await Ad.findById(req.params.id);
+    const ad = await Ad.findOneAndDelete({ _id: req.params.id});
     if (ad) {
       const photoPath = path.resolve(`public/uploads/${ad.photo}`);
 
@@ -145,14 +160,12 @@ exports.deleteAd = async(req, res) => {
       } else {
         console.error('File does not exist:', photoPath);
       }
-      await Ad.deleteOne({ _id: req.params.id });
       res.json({ message: 'OK' });
     } else {
       res.status(404).json({ message: 'Not found...' });
     }
   } catch (err) {
-    console.error('Error deleting ad:', err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: 'Error deleting ad:', message: err.message });
   }
 };
 
