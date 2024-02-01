@@ -1,9 +1,9 @@
-import AllPosts from "../../features/AllPosts/AllPosts";
+import AllAds from "../../features/AllPosts/AllPosts";
 
 
 const Home = () => (
     <div>
-       <AllPosts />
+       <AllAds />
     </div>
   );
   
