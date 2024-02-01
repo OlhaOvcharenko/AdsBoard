@@ -1,6 +1,9 @@
+import AllPosts from "../../features/AllPosts/AllPosts";
+
+
 const Home = () => (
     <div>
-       Hello
+       <AllPosts />
     </div>
   );
   
