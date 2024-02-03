@@ -1,17 +1,27 @@
-
 import React, { useState } from 'react';
 import { Form, InputGroup, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 const Search = () => {
  
   const [searchPhrase, setSearchPhrase] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleSearch = e => {
-    e.preventDefault()
-    navigate('/search/' + searchPhrase);
+  const handleSearch = (e) => {
+    e.preventDefault();
+  
+  
+    if (searchPhrase.trim() === '') {
+      // Display information that search term is required
+      alert('Please enter a search term');
+    } else {
+      // Perform the search if a search phrase is entered
+      navigate('ads/search/' + searchPhrase);
+    }
   };
+  
 
   return (
     <section className="Search">

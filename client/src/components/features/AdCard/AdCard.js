@@ -1,4 +1,3 @@
-
 import { Col, Card } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { IMAGES_URL } from "../../../config";

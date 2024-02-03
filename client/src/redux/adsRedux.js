@@ -1,16 +1,7 @@
 import axios from 'axios';
 import { API_URL } from '../config';
 
-/* SELECTORS */
-export const getAllAds = ({ ads }) => ads.data;
-export const getSearchedAds = ({ ads, searchPhrase }) =>
-ads.filter(ad => ad.title.toLowerCase().includes(searchPhrase.toLowerCase()));
-
-export const getRequest = ({ ads }, name) => ads.requests[name];
-
 /* ACTIONS */
-
-// Action name creator
 const reducerName = 'ads';
 const createActionName = name => `app/${reducerName}/${name}`;
 
@@ -19,16 +10,23 @@ const END_REQUEST = createActionName('END_REQUEST');
 const ERROR_REQUEST = createActionName('ERROR_REQUEST');
 
 export const LOAD_ADS = createActionName('LOAD_ADS');
+export const UPDATE_SEARCHPHRASE = createActionName('UPDATE_SEARCHPHRASE');  // Added
 
 export const startRequest = payload => ({ payload, type: START_REQUEST });
 export const endRequest = payload => ({ payload, type: END_REQUEST });
 export const errorRequest = payload => ({ payload, type: ERROR_REQUEST });
 
 export const loadAds = payload => ({ payload, type: LOAD_ADS });
+export const updateSearchPhrase = payload => ({ type: UPDATE_SEARCHPHRASE, payload });  // Added
 
+/* SELECTORS */
+export const getAllAds = ({ ads }) => ads.data;
+export const getSearchedAds = ({ ads, searchPhrase }) =>
+  ads.data.filter(ad => ad.title.toLowerCase().includes(searchPhrase.toLowerCase()));
+
+export const getRequest = ({ ads }, name) => ads.requests[name];
 
 /* THUNKS */
-
 export const loadAdsRequest = (searchPhrase) => {
   return async (dispatch) => {
     const requestName = LOAD_ADS;
@@ -44,22 +42,30 @@ export const loadAdsRequest = (searchPhrase) => {
   };
 };
 
-
 /* INITIAL STATE */
-
 const initialState = {
   data: [],
   searchResults: [],
   requests: {},
+  search: {
+    searchPhrase: '',  // Initial search phrase state
+  },
 };
 
 /* REDUCER */
-
 export default function reducer(statePart = initialState, action = {}) {
   switch (action.type) {
     case LOAD_ADS:
       console.log('LOAD_ADS action received:', action.payload);
       return { ...statePart, data: [...action.payload] };
+    case UPDATE_SEARCHPHRASE:
+      return {
+        ...statePart,
+        search: {
+          ...statePart.search,
+          searchPhrase: action.payload,
+        },
+      };
     case START_REQUEST:
       return {
         ...statePart,

@@ -1,6 +1,8 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { withExtraArgument, thunk } from 'redux-thunk';
 import adsReducer from './adsRedux';
+
+
 // combine reducers
 const rootReducer = combineReducers({
   ads: adsReducer,
