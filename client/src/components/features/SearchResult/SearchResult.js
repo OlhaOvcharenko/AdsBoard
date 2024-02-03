@@ -1,22 +1,35 @@
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getAllAds } from "../../../redux/adsRedux";
+import { getAllAds, loadSearchedAdsRequest } from "../../../redux/adsRedux";
 import { Col, Card, Button } from "react-bootstrap";
 import { IMAGES_URL } from "../../../config";
 import { Nav } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
+import { getSearchedAds } from "../../../redux/adsRedux";
+import Search from "../SearchForm/SearchForm";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { loadAdsRequest } from "../../../redux/adsRedux";
+import { clearSearchResults } from "../../../redux/adsRedux";
 
 const SearchResult = () => {
   const { searchPhrase } = useParams();
-  const ads = useSelector(getAllAds);
-  console.log(ads);
-  const searchedAds = ads.filter(ad => ad.title.toLowerCase().includes(searchPhrase.toLowerCase()));
-  //const searchedAds = useSelector((state) => getSearchedAds(state, searchPhrase));
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(clearSearchResults());
+    dispatch(loadSearchedAdsRequest(searchPhrase)); // Load new search results
+  }, [dispatch, searchPhrase]);
   
+  const searchedAds = useSelector((state) => getSearchedAds(state, searchPhrase));
+  
+  console.log(searchedAds)
 
   return (
     <section className="Searched Ads">
       <div className="row my-3">
+      <Search />
       {searchedAds.map((ad) => (
         <Col key={ad.id} className="col-lg-4 col-sm-12 col-md-4 mx-3 py-2" style={{ width:'25rem'}}>
             <Card>

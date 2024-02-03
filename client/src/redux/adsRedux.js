@@ -11,6 +11,7 @@ const ERROR_REQUEST = createActionName('ERROR_REQUEST');
 
 export const LOAD_ADS = createActionName('LOAD_ADS');
 export const UPDATE_SEARCHPHRASE = createActionName('UPDATE_SEARCHPHRASE');  // Added
+export const CLEAR_SEARCH_RESULTS = createActionName('CLEAR_SEARCH_RESULTS'); 
 
 export const startRequest = payload => ({ payload, type: START_REQUEST });
 export const endRequest = payload => ({ payload, type: END_REQUEST });
@@ -18,16 +19,21 @@ export const errorRequest = payload => ({ payload, type: ERROR_REQUEST });
 
 export const loadAds = payload => ({ payload, type: LOAD_ADS });
 export const updateSearchPhrase = payload => ({ type: UPDATE_SEARCHPHRASE, payload });  // Added
+export const clearSearchResults = () => ({
+  type: CLEAR_SEARCH_RESULTS,
+});
 
 /* SELECTORS */
 export const getAllAds = ({ ads }) => ads.data;
-export const getSearchedAds = ({ ads, searchPhrase }) =>
+
+export  const getAdById = ({ads}, adId) => ads.data.find(ad=> ad.id === adId);
+export const getSearchedAds = ({ads}, searchPhrase ) =>
   ads.data.filter(ad => ad.title.toLowerCase().includes(searchPhrase.toLowerCase()));
 
 export const getRequest = ({ ads }, name) => ads.requests[name];
 
 /* THUNKS */
-export const loadAdsRequest = (searchPhrase) => {
+export const loadAdsRequest = () => {
   return async (dispatch) => {
     const requestName = LOAD_ADS;
     dispatch(startRequest({ name: requestName }));
@@ -42,13 +48,31 @@ export const loadAdsRequest = (searchPhrase) => {
   };
 };
 
+export const loadSearchedAdsRequest = (searchPhrase) => {
+  return async (dispatch) => {
+    const requestName = LOAD_ADS;
+    dispatch(startRequest({ name: requestName }));
+
+    try {
+      let res = await axios.get(`${API_URL}/ads/${searchPhrase}`);
+      dispatch(loadAds(res.data));
+      dispatch(endRequest({ name: requestName }));
+    } catch (e) {
+      dispatch(errorRequest({ name: requestName, error: e.message }));
+    }
+  };
+};
+
+
 /* INITIAL STATE */
 const initialState = {
   data: [],
   searchResults: [],
   requests: {},
   search: {
-    searchPhrase: '',  // Initial search phrase state
+    searchPhrase: '',
+    originalData: [],  // Add the originalData array within the search object
+    data: [],         // Add the data array within the search object
   },
 };
 
@@ -58,14 +82,23 @@ export default function reducer(statePart = initialState, action = {}) {
     case LOAD_ADS:
       console.log('LOAD_ADS action received:', action.payload);
       return { ...statePart, data: [...action.payload] };
-    case UPDATE_SEARCHPHRASE:
-      return {
-        ...statePart,
-        search: {
-          ...statePart.search,
-          searchPhrase: action.payload,
-        },
-      };
+      case UPDATE_SEARCHPHRASE:
+        return {
+          ...statePart,
+          search: {
+            ...statePart.search,
+            searchPhrase: action.payload,
+          },
+        };
+      case CLEAR_SEARCH_RESULTS:
+        return {
+          ...statePart,
+          searchResults: [],
+          search: {
+            ...statePart.search,
+            data: [...statePart.search.originalData],  // Reset to the original data
+          },
+        };
     case START_REQUEST:
       return {
         ...statePart,
