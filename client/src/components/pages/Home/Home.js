@@ -2,9 +2,7 @@ import AllAds from "../../features/AllPosts/AllPosts";
 
 
 const Home = () => (
-    <div>
-       <AllAds />
-    </div>
-  );
+  <AllAds />
+);
   
   export default Home;
