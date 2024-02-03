@@ -8,7 +8,8 @@ import { loadAdsRequest } from "../../../redux/adsRedux";
 import { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { IMAGES_URL } from "../../../config";
-import Search from "../SearchPostForm/Search";
+import Search from "../SearchForm/SearchForm";
+import AdCard from "../AdCard/AdCard";
 
 const AllAds = () => {
   const dispatch = useDispatch();
@@ -28,26 +29,11 @@ const AllAds = () => {
   } else {
     return (
       <section className="Posts">
-
         <h1 className="text-center py-4"> ADVERTISMENTS</h1>
-
         <Search />
-
         <div className="row my-3">
         {sortedAds.map((ad) => (
-          <Col key={ad.id} className="col-lg-4 col-sm-12 col-md-4 mx-3 py-2" style={{ width:'25rem'}}>
-             <Card>
-              <Card.Body className="p-0">
-                <Card.Img variant="top mb-2" src={`${IMAGES_URL}/${ad.photo}`} style={{height: '20rem', objectFit: 'cover' }} />
-                <Card.Title className="px-2">{ad.title}</Card.Title>
-                <Card.Text className="px-2 py-1">
-                    <b>Location:</b> {ad.location}
-                </Card.Text>
-                <Button variant="secondary" className="m-2">Read More</Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+          <AdCard key={ad.id} photo={ad.photo} title={ad.title} author={ad.author} />))}
         </div>
 
       </section>

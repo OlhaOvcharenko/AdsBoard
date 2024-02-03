@@ -7,6 +7,7 @@ import NotFound from './components/pages/Not Found/NotFound';
 import { Container } from 'react-bootstrap';
 import Header from './components/views/Header/Header';
 import Footer from './components/views/Footer/Footer';
+import SearchResult from './components/features/SearchResult/SearchResult';
 
 const App = () => (
   <main>
@@ -14,9 +15,10 @@ const App = () => (
       <Header   />
       <Routes>
         <Route path="/" element={<Home />}/>
-        <Route path="/post/:postId" element={<Post />}/>
-        <Route path="/post/add" element={<AddPost />}/>
-        <Route path="/post/edit/:id" element={<EditPost />} />
+        <Route path="/ads/search/:searchPhrase" element={<SearchResult />}/>
+        <Route path="/ads/:Id" element={<Post />}/>
+        <Route path="/ads/add" element={<AddPost />}/>
+        <Route path="/ads/edit/:id" element={<EditPost />} />
         <Route path="*" element={<NotFound />}/>
       </Routes>
       <Footer />

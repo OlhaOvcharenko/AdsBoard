@@ -1,10 +1,9 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { withExtraArgument, thunk } from 'redux-thunk';
 import adsReducer from './adsRedux';
-
 // combine reducers
 const rootReducer = combineReducers({
-  ads: adsReducer
+  ads: adsReducer,
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

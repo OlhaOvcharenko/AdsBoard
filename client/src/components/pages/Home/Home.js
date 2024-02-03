@@ -1,8 +1,8 @@
-import AllAds from "../../features/AllPosts/AllPosts";
+import AllAds from "../../features/AllPosts/AllAds";
 
 
 const Home = () => (
   <AllAds />
 );
   
-  export default Home;
+export default Home;
