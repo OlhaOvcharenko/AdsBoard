@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');//????
+const path = require('path');
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const session = require("express-session");
@@ -28,15 +28,22 @@ db.once('open', () => {
   console.log('Connected to the database');
 });
 
+
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(session({secret: "xyz567", store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false}));
 
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || "xyz567",
+  store: MongoStore.create({ mongoUrl: dbUri }),
+  resave: false,
+  saveUninitialized: false
+}));
+
+// API routes
 const adsRoutes = require('./routes/ads.routes');
 const authRoutes = require('./routes/auth.routes');
-const { connect } = require('http2');
-
 app.use('/api', adsRoutes);
 app.use('/auth', authRoutes);
 
@@ -44,11 +51,12 @@ app.use('/auth', authRoutes);
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.static(path.join(__dirname, '/client/build')));
 
-
+// Handle React SPA routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));
 });
 
+// Handle 404
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found...' });
 });

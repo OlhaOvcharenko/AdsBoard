@@ -34,8 +34,10 @@ exports.getBySearchPhrase = async(req, res) => {
     const searchPhrase = req.params.searchPhrase;
     const sanitizedSearchPhrase = searchPhrase.replace(/\+/g, ' ');
     const adsByPhrase = await Ad.find({
-      title: { $regex: new RegExp(sanitizedSearchPhrase, 'i'),
-      }
+      $or: [
+        { title: { $regex: new RegExp(sanitizedSearchPhrase, 'i') } },
+        { location: { $regex: new RegExp(sanitizedSearchPhrase, 'i') } },
+      ]
     });
 
     if (!adsByPhrase.length) {
