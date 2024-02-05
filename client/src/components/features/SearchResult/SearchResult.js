@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getAllAds, loadSearchedAdsRequest } from "../../../redux/adsRedux";
 import { Col, Card, Button } from "react-bootstrap";
 import { IMAGES_URL } from "../../../config";
 import { Nav } from "react-bootstrap";
@@ -40,8 +39,6 @@ const SearchResult = () => {
       </Nav.Link>
     </section>
   );
-
- 
 };
 
 export default SearchResult;

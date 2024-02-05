@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import { IMAGES_URL } from "../../../config";
 import { Nav } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
+
 const AdCard = ({ id, photo, title, location}) => (
 
   <Col className="col-lg-4 col-sm-12 col-md-4 mx-3 py-2" style={{ width:'25rem'}}>

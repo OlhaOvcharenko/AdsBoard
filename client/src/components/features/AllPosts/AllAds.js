@@ -30,10 +30,10 @@ const AllAds = () => {
         {sortedAds.map((ad) => (
           <AdCard key={ad.id} photo={ad.photo} title={ad.title} location={ad.location} />))}
         </div>
-
       </section>
     );
   }
+  
 };
   
   export default AllAds;
