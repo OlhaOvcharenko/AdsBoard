@@ -1,6 +1,8 @@
+import SignUpForm from "../../features/SignUpForm/SignUpForm";
+
 const SignUp = () => (
     <div>
-       Singup
+      <SignUpForm />
     </div>
   );
   
