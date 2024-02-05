@@ -15,12 +15,11 @@ const Search = () => {
     e.preventDefault();
     
     if (searchPhrase.trim() === '') {
-      // Display information that search term is required
+     
       alert('Please enter a search term');
     } else {
       dispatch(updateSearchPhrase(searchPhrase));
       setSearchPhrase("");
-      // Perform the search if a search phrase is entered
       navigate(`/ads/search/${searchPhrase}`);
     }
   };

@@ -7,20 +7,10 @@ import { Nav } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { getSearchedAds } from "../../../redux/adsRedux";
 import Search from "../SearchForm/SearchForm";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { loadAdsRequest } from "../../../redux/adsRedux";
-import { clearSearchResults } from "../../../redux/adsRedux";
+
 
 const SearchResult = () => {
   const { searchPhrase } = useParams();
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(clearSearchResults());
-    dispatch(loadSearchedAdsRequest(searchPhrase)); // Load new search results
-  }, [dispatch, searchPhrase]);
   
   const searchedAds = useSelector((state) => getSearchedAds(state, searchPhrase));
   
