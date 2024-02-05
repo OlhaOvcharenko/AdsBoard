@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_URL } from '../config';
+import initialState from './initialState';
 
 /* ACTIONS */
 const reducerName = 'ads';
@@ -43,13 +44,6 @@ export const loadAdsRequest = () => {
       dispatch(errorRequest({ name: requestName, error: e.message }));
     }
   };
-};
-
-
-/* INITIAL STATE */
-const initialState = {
-  data: [],
-  requests: {},
 };
 
 /* REDUCER */
