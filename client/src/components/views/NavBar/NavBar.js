@@ -21,9 +21,14 @@ const NavBar = () => {
                 <span>Home</span>
               </Nav.Link>
               {user ? (
+                <>
+                <Nav.Link as={NavLink} to="/ads">
+                  <span>Create advert</span>
+                </Nav.Link>
                 <Nav.Link as={NavLink} to="/logout">
                   <span>Sign out</span>
-                </Nav.Link> 
+                </Nav.Link>
+                </>
               ) : (
                 <Nav.Link as={NavLink} to="/login">
                   <span>Sign in</span>
