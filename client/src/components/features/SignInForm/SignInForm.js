@@ -57,7 +57,7 @@ const SignInForm = () => {
         {status === "success" && (
         <Alert variant="success">
           <Alert.Heading>Success!</Alert.Heading>
-          <p>You have successfully registered. Now you can log in...</p>
+          <p>You have successfully logged in.</p>
         </Alert> )}
         {status === "serverError" && (
         <Alert variant="danger">

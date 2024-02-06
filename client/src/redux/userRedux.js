@@ -1,5 +1,5 @@
 import { API_URL } from "../config";
-import initialState from "./initialState";
+
 //selector
 export const getUser = ({user}) => user;
 
@@ -10,7 +10,6 @@ const LOG_IN = createActionName("LOG_IN");
 
 const LOG_OUT = createActionName("LOG_OUT");
 
-const SET_LOGGED_USER = createActionName("SET_LOGGED_USER");
 // action creators
 export const logIn = (payload) => ({
   type: LOG_IN,
@@ -22,48 +21,30 @@ export const logout = (payload) => ({
   payload,
 });
 
-export const userIdentification = (payload) => ({
-  type: SET_LOGGED_USER,
-  payload,
-});
-
 export const fetchUserData = () => {
-  return (dispatch) => {
-    const options = {
-      method: "GET",
-      credentials: 'include'
-    };
-  
-    fetch(`${API_URL}/auth/user`, options)
-      .then((res) => {
-        if (res.ok) {
-          return res.json(); 
+  return(dispatch) => {
+    
+    fetch(`${API_URL}/auth/user`)
+    .then(res => res.json())
+      .then(res => {
+        if(res.status === 200) {
+          dispatch(logIn( res.user ));
         } else {
-          throw new Error("Server error");
+          console.log('No logged user')
         }
       })
-      .then((data) => {
-        dispatch(userIdentification({ user: data }));
-        console.log(data, 'logged user')
-      })
-      .catch((err) => {
-        throw new Error("Server error");
-      });
   };
 };
 
-
-const usersReducer = (statePart = initialState, action) => {
+const usersReducer = (statePart = [], action) => {
   switch (action.type) {
     case LOG_IN:
-      return { ...statePart, user: action.payload }; // Assuming action.payload contains user data
-    case SET_LOGGED_USER:
-      return { ...statePart, user: action.payload }; // Assuming action.payload contains user data
+      return action.payload;
     case LOG_OUT:
-      return { ...statePart, user: null }; // Reset user data upon logout
+      return null;
     default:
       return statePart;
-  }
+  };
 };
 
 export default usersReducer;

@@ -23,7 +23,7 @@ const NavBar = () => {
               {user ? (
                 <Nav.Link as={NavLink} to="/logout">
                   <span>Sign out</span>
-                </Nav.Link>
+                </Nav.Link> 
               ) : (
                 <Nav.Link as={NavLink} to="/login">
                   <span>Sign in</span>
