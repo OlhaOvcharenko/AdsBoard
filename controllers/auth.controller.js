@@ -94,7 +94,22 @@ exports.login = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  res.send("Yeh, I/m logged!" + req.session.user.login )
+  try {
+    if (req.session.user && req.session.user.id) {
+      const loggedUser = await User.findById(req.session.user.id);
+      if (loggedUser) {
+        console.log(loggedUser);
+        return res.json(loggedUser);
+      } else {
+        return res.status(404).json({ message: "User not found" });
+      }
+    } else {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 exports.logout = async (req, res) => {

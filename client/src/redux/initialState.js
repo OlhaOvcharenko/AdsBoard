@@ -2,7 +2,7 @@
 const initialState = {
   data: [],
   requests: {},
-  users: null
+  user: null
 };
 
 export default initialState;

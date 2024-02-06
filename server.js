@@ -29,7 +29,11 @@ db.once('open', () => {
 });
 
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -38,7 +42,6 @@ app.use(session({
   secret: process.env.SESSION_SECRET || "xyz567",
   store: MongoStore.create({ mongoUrl: dbUri }),
   resave: false,
-  saveUninitialized: false
 }));
 
 // API routes

@@ -11,30 +11,30 @@ import { logIn } from "../../../redux/userRedux";
 
 const SignInForm = () => {
   
-  const [ login, setLogin] = useState();
-  const [ password, setPassword] = useState();
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+
   const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
   
   const dispatch = useDispatch();
 
   const handleSubmit =(e) => {
     e.preventDefault();
-
-
+    console.log(login,password, 'login data')
     const options = {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content type': 'application/json'
+        'Content-Type': 'application/json' 
       },
-      body: JSON.stringify({login, password})
+      body: JSON.stringify({ login, password })
     }
 
     setStatus("loading");
     fetch(`${API_URL}/auth/login`, options)
       .then((res) => {
-        if (res.status === 201) {
+        if (res.status === 200) {
           setStatus("success");
-          dispatch(logIn({login, password}))
+          dispatch(logIn({login}))
         } else if (res.status === 400) {
           setStatus("clientError");
         } else if (res.status === 409) {
@@ -96,7 +96,7 @@ const SignInForm = () => {
           <p>If you don't have a user profile, please register. Click the button below to sign up</p>
         </div>
 
-        <Nav.Link as={NavLink} to="/auth/register" className="text-center">
+        <Nav.Link as={NavLink} to="/register" className="text-center">
           <span>Sign up!</span>
         </Nav.Link>
       </Form>

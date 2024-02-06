@@ -37,7 +37,7 @@ export const loadAdsRequest = () => {
     dispatch(startRequest({ name: requestName }));
 
     try {
-      let res = await axios.get(`${API_URL}/ads`);
+      let res = await axios.get(`${API_URL}/api/ads`);
       dispatch(loadAds(res.data));
       dispatch(endRequest({ name: requestName }));
     } catch (e) {

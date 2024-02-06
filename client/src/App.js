@@ -10,28 +10,39 @@ import Footer from './components/views/Footer/Footer';
 import SearchResult from './components/features/SearchResult/SearchResult'
 import SignIn from './components/pages/SignIn/SignIn';
 import SignUp from './components/pages/SignUp/SignUp';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import LogOut from './components/pages/LogOut/LogOut';
+import { fetchUserData } from './redux/userRedux';
 
+const App = () => {
 
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(fetchUserData());
+  }, [dispatch]);
 
-const App = () => (
-  <main>
-    <Container>
-      <Header   />
-      <Routes>
-        <Route path="/" element={<Home />}/>
-        <Route path="/ads/search/:searchPhrase" element={<SearchResult />}/>
-        <Route path="/ads/:id" element={<Ad />}/>
-        <Route path="/ads/add" element={<AddPost />}/>
-        <Route path="/ads/edit/:id" element={<EditPost />} />
-        <Route path="/auth/login" element={<SignIn />} />
-        <Route path="/auth/register" element={<SignUp />} />
-        <Route path="*" element={<NotFound />}/>
-      </Routes>
-      <Footer />
-    </Container>
+  return ( 
+    <main>
+      <Container>
+        <Header   />
+        <Routes>
+          <Route path="/" element={<Home />}/>
+          <Route path="/ads/search/:searchPhrase" element={<SearchResult />}/>
+          <Route path="/ads/:id" element={<Ad />}/>
+          <Route path="/ads/add" element={<AddPost />}/>
+          <Route path="/ads/edit/:id" element={<EditPost />} />
+          <Route path="/register" element={<SignUp />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/logout" element={<LogOut />} />
+          <Route path="*" element={<NotFound />}/>
+        </Routes>
+        <Footer />
+      </Container>
   </main>
-);
+  )
+};
 
 export default App;
 
