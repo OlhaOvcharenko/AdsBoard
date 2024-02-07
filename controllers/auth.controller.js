@@ -95,7 +95,9 @@ exports.login = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    if (req.session.user && req.session.user.id) {
+
+    res.status(200).send({ message: "Yeh I m logged:" + req.session.user.login});
+    /*if (req.session.user && req.session.user.id) {
       const loggedUser = await User.findById(req.session.user.id);
       if (loggedUser) {
         console.log(loggedUser);
@@ -105,7 +107,7 @@ exports.getUser = async (req, res) => {
       }
     } else {
       return res.status(401).json({ message: "User not authenticated" });
-    }
+    }*/
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal server error" });

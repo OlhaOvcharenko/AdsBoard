@@ -39,7 +39,7 @@ app.use(express.json());
 
 // Session configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET || "xyz567",
+  secret: "xyz567",
   store: MongoStore.create({ mongoUrl: dbUri }),
   resave: false,
 }));

@@ -37,34 +37,45 @@ export const logout = (payload) => ({
 export const fetchUserData = () => {
   return (dispatch) => {
     // Check if user data exists in local storage
-    const storedUser = localStorage.getItem('user');
+    /*const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      dispatch(logIn(user));
-    } else {
-      // Fetch user data from the server
-      const options = {
-        method: "GET",
-        credentials: 'include'
-      };
+      dispatch(logIn({ user }));
+    }*/
 
-      fetch(`${API_URL}/auth/user`, options)
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            throw new Error("Server error");
-          }
-        })
-        .then((data) => {
-          dispatch(userIdentification(data));
-        })
-        .catch((err) => {
-          console.error("Error fetching user data:", err);
-        });
-    }
+    const options = {
+      method: "GET",
+      credentials: 'include'
+    };
+
+    fetch(`${API_URL}/auth/user`, options)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error("Server error");
+        }
+      })
+      .then((user) => {
+        // Update user data in local storage
+        localStorage.setItem('user', JSON.stringify(user));
+        dispatch(logIn({ user }));
+        console.log('user logged in:', user )
+      })
+      .catch((err) => {
+        console.error("Error fetching user data:", err);
+      });
   };
 };
+
+/*export const logoutUser = () => {
+  return (dispatch) => {
+    // Clear user data from local storage
+    localStorage.removeItem('user');
+    // Dispatch action to update Redux store
+    dispatch(logout());
+  };
+};*/
 
 const usersReducer = (state = [], action) => {
   switch (action.type) {
