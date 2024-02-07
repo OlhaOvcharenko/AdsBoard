@@ -66,15 +66,9 @@ exports.login = async (req, res) => {
 
         if(bcrypt.compareSync( password, user.password)){
           
-            const userObject = {
-              id: user.id,
-              login: user.login,
-            };
-        
-            req.session.user = userObject;
-            console.log(userObject);
-
-          res.status(200).send({ message: "Login succesful." });
+          req.session.user = { login: user.login, id: user._id };
+          res.status(200).json( req.session.user );
+           console.log('user', req.session.user)
 
         } else {
           res.status(400).send({ message: "Login or password are incorrect." });
@@ -95,9 +89,7 @@ exports.login = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-
-    res.status(200).send({ message: "Yeh I m logged:" + req.session.user.login});
-    /*if (req.session.user && req.session.user.id) {
+    if (req.session.user && req.session.user.id) {
       const loggedUser = await User.findById(req.session.user.id);
       if (loggedUser) {
         console.log(loggedUser);
@@ -107,7 +99,7 @@ exports.getUser = async (req, res) => {
       }
     } else {
       return res.status(401).json({ message: "User not authenticated" });
-    }*/
+    }
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal server error" });

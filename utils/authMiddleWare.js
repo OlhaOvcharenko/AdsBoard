@@ -1,4 +1,5 @@
 const Session = require('../models/session.model');
+
 const authMiddleware = async (req, res, next) => {
 
   if (process.env.NODE_ENV !== "production") {
@@ -35,5 +36,6 @@ const authMiddleware = async (req, res, next) => {
     }
   }
 }
+
 
 module.exports = authMiddleware;
