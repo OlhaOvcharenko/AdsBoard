@@ -28,7 +28,8 @@ const AllAds = () => {
         <Search />
         <div className="row my-3">
         {sortedAds.map((ad) => (
-          <AdCard key={ad.id} photo={ad.photo} title={ad.title} location={ad.location} />))}
+          <AdCard key={ad._id} id={ad._id} photo={ad.photo} title={ad.title} location={ad.location} author={ad.author} />
+          ))}
         </div>
       </section>
     );

@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { Nav }from "react-bootstrap";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Alert, Spinner } from "react-bootstrap";
 import { API_URL } from "../../../config";
@@ -10,13 +10,14 @@ import { useDispatch } from "react-redux";
 import { logIn } from "../../../redux/userRedux";
 
 const SignInForm = () => {
-  
+
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
   const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
   
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit =(e) => {
     e.preventDefault();
@@ -34,7 +35,8 @@ const SignInForm = () => {
       .then((res) => {
         if (res.status === 200) {
           setStatus("success");
-          dispatch(logIn({login}))
+          dispatch(logIn({login}));
+          navigate('/')
         } else if (res.status === 400) {
           setStatus("clientError");
         } else if (res.status === 409) {
