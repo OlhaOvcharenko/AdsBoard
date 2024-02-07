@@ -112,7 +112,7 @@ exports.logout = async (req, res) => {
     req.session.destroy();
 
     if (process.env.NODE_ENV !== "production") {
-    await Session.deleteMany({});
+      await Session.deleteMany({});
     }
     res.status(200).send({ message: "Logout successful." });
 

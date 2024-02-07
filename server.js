@@ -29,20 +29,20 @@ db.once('open', () => {
 });
 
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
+if(process.env.NODE_ENV !== 'production') {
+  app.use(
+    cors({
+      origin: ['http://localhost:3000', 'http://localhost:8000'],
+      credentials: true,
+    })
+  );
+}
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Session configuration
-app.use(session({
-  secret: "xyz567",
-  store: MongoStore.create({ mongoUrl: dbUri }),
-  resave: false,
-}));
+app.use(session({secret:'xyz567', store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false}));
 
 // API routes
 const adsRoutes = require('./routes/ads.routes');
