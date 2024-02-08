@@ -1,7 +1,8 @@
+import CreateAdForm from "../../features/CreateAdForm/CreateAdForm";
+
+
 const CreateAd = () => (
-    <div>
-       NewAd
-    </div>
-  );
+  <CreateAdForm />  
+);
   
-  export default CreateAd;
+export default CreateAd;

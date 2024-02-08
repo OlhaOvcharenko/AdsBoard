@@ -11,20 +11,24 @@ const END_REQUEST = createActionName('END_REQUEST');
 const ERROR_REQUEST = createActionName('ERROR_REQUEST');
 
 export const LOAD_ADS = createActionName('LOAD_ADS');
-export const UPDATE_SEARCHPHRASE = createActionName('UPDATE_SEARCHPHRASE');  // Added); 
+export const UPDATE_SEARCHPHRASE = createActionName('UPDATE_SEARCHPHRASE'); 
+export const CREATE_AD = createActionName("CREATE_AD");
 
 export const startRequest = payload => ({ payload, type: START_REQUEST });
 export const endRequest = payload => ({ payload, type: END_REQUEST });
 export const errorRequest = payload => ({ payload, type: ERROR_REQUEST });
 
 export const loadAds = payload => ({ payload, type: LOAD_ADS });
-export const updateSearchPhrase = payload => ({ type: UPDATE_SEARCHPHRASE, payload });  // Added
+export const updateSearchPhrase = payload => ({ type: UPDATE_SEARCHPHRASE, payload });  
+export const createAd = payload => ({ type: CREATE_AD, payload });  
 
 
 /* SELECTORS */
 export const getAllAds = ({ ads }) => ads.data;
 
-export  const getAdById = ({ads}, adId) => ads.data.find(ad=> ad.id === adId);
+export const getAdById = ({ ads }, adId) =>
+  ads.data.find((ad) => ad._id === adId);
+
 export const getSearchedAds = ({ads}, searchPhrase ) =>
   ads.data.filter(ad => ad.title.toLowerCase().includes(searchPhrase.toLowerCase()) || ad.location.toLowerCase().includes(searchPhrase.toLowerCase()) );
 
@@ -46,6 +50,33 @@ export const loadAdsRequest = () => {
   };
 };
 
+
+export const createAdRequest = (data) => {
+  return async dispatch => {
+
+    dispatch(startRequest({ name: CREATE_AD }));
+    try {
+
+      let res = await axios.post(
+        `${API_URL}/api/ads`,
+        data,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+        },
+      );
+
+      dispatch(createAd(res.data));
+      dispatch(endRequest({ name: CREATE_AD }));
+
+    } catch(e) {
+      dispatch(errorRequest({ name: CREATE_AD, error: e.message }));
+    }
+
+  };
+};
+
 /* REDUCER */
 export default function reducer(statePart = initialState, action = {}) {
   switch (action.type) {
@@ -60,6 +91,8 @@ export default function reducer(statePart = initialState, action = {}) {
           searchPhrase: action.payload,
         },
       };
+    case CREATE_AD: 
+      return { ...statePart, data: [...statePart.data, action.payload] }
     case START_REQUEST:
       return {
         ...statePart,

@@ -12,12 +12,12 @@ const AllAds = () => {
   const dispatch = useDispatch();
   const ads = useSelector(getAllAds);
   const request = useSelector(state => getRequest(state, LOAD_ADS));
-  
+  console.log(request)
   useEffect(() => {
     dispatch(loadAdsRequest());
   }, [dispatch]);
 
-  const sortedAds = ads.slice().sort((a, b) => a.title.localeCompare(b.title));
+  //const sortedAds = ads.slice().sort((a, b) => a.title.localeCompare(b.title));
 
   if (!request || !request.success) {
     return <Spinner color="primary" className="standard-box d-block me-auto ms-auto" />;
@@ -27,8 +27,8 @@ const AllAds = () => {
         <h1 className="text-center py-4"> ADVERTISMENTS</h1>
         <Search />
         <div className="row my-3">
-        {sortedAds.map((ad) => (
-          <AdCard key={ad._id} id={ad._id} photo={ad.photo} title={ad.title} location={ad.location} author={ad.author} />
+        {ads.map((ad) => (
+          <AdCard key={ad._id} ad={ad} />
           ))}
         </div>
       </section>
