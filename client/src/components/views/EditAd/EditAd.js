@@ -1,6 +1,9 @@
+import EditAdForm from "../../features/EditAdForm/EditAdForm";
+
 const EditAd = () => (
     <div>
-       EditAd
+      <h2>Edit your advertise: </h2>
+      <EditAdForm />
     </div>
   );
   

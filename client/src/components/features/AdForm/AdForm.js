@@ -18,16 +18,12 @@ import 'react-quill/dist/quill.snow.css';
 
 
 const AdForm = ({ action, actionText, author, date, ...props }) => {
-    
-    const request = useSelector(state => getRequest(state, CREATE_AD));
-
-    console.log(request);
 
     const [title, setTitle] = useState(props.title || '');
     const [price, setPrice] = useState(props.price || '');
     const [description, setDescription] = useState(props.description || '');
     const [location, setLocation] = useState(props.location || '');
-    const [photo, setPhoto] = useState(props.location || '');
+    const [photo, setPhoto] = useState(props.photo || '');
     const [descriptionError, setDescriptionError ] = useState(false);
     const [photoError, setPhotoError ] = useState(false);
 
@@ -69,7 +65,7 @@ const AdForm = ({ action, actionText, author, date, ...props }) => {
 
             <Row className="d-flex flex-column"> 
                 <Form onSubmit={validate(handleSubmit)}>
-                  <h2>Add your advertise: </h2>
+            
                     <Col lg={6} xs={12} md={8}>
                         <Form.Group className="mb-3 py-2 px-1" controlId="formGroupTitle">
                           <Form.Label>Title</Form.Label>
@@ -106,7 +102,7 @@ const AdForm = ({ action, actionText, author, date, ...props }) => {
                     <Col lg={8} xs={12} md={10} className="px-1">
 
                        <Form.Group className="mb-3" controlId="formFile">
-                            <Form.Label>Photo</Form.Label>
+                            <Form.Label>Photo:    {props.photo}</Form.Label>
                             <Form.Control
                                 accept=".jpeg, .png, .gif"
                                 onChange={handleFileChange}

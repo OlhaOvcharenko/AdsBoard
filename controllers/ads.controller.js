@@ -107,8 +107,6 @@ exports.editAd = async(req, res) => {
 
     const ad = await Ad.findById(req.params.id);
 
-    if(req.session.user.id == ad.author.id){
-
       if (ad) {
         const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
 
@@ -140,9 +138,7 @@ exports.editAd = async(req, res) => {
         fs.unlinkSync(path);
         res.status(404).json({ message: 'Not found...' });
       }
-    } else {
-      res.status(400).json({ message: 'You are not authorized' });
-    }
+  
   } catch (err) {
     const path = req.file ? req.file.path : null;
     fs.unlinkSync(path);

@@ -11,7 +11,7 @@ import { getAdById } from "../../../redux/adsRedux";
 import { getUser } from "../../../redux/userRedux";
 import { Link } from "react-router-dom";
 
-const Ad = () => {
+const Ad = (props) => {
 
   const { id } = useParams();
   console.log(id, 'id');
@@ -19,6 +19,7 @@ const Ad = () => {
   console.log(adData);
 
   const user = useSelector(getUser);
+  const authorOfAd = user.currentUser && user.currentUser.user._id === adData.author._id;
 
   if (!adData) return <Navigate to="/" />;
   else {
@@ -38,7 +39,15 @@ const Ad = () => {
               <Card.Text className="mb-3"><b>Location:</b> {adData.location}</Card.Text>
               
               
-              {/* Only display the "Edit advert" button if the current user is the author */}
+              {authorOfAd && (
+                <Button as={Link} key={props.id} to={`/ads/edit/${adData._id}`} className="m-2" variant="secondary"> Edit advert </Button>
+              )}
+
+              {/* Delete button */}
+              {authorOfAd && (
+                <Button className="m-2" variant="danger"> Delete advert </Button>
+              )}
+              
               
             </Card.Body>
           </Card>
