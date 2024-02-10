@@ -5,19 +5,12 @@ import  { Button } from "react-bootstrap";
 import { useState } from "react";
 import { Card } from "react-bootstrap";
 import { useForm } from 'react-hook-form';
-import { Alert } from "react-bootstrap";
-import { Spinner }from "react-bootstrap";
-
-import { useSelector } from "react-redux";
-import { getRequest } from "../../../redux/adsRedux";
-import { CREATE_AD } from "../../../redux/adsRedux";
-
 
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 
 
-const AdForm = ({ action, actionText, author, date, ...props }) => {
+const AdForm = ({ action, actionText, author, date,  ...props }) => {
 
     const [title, setTitle] = useState(props.title || '');
     const [price, setPrice] = useState(props.price || '');
@@ -27,8 +20,6 @@ const AdForm = ({ action, actionText, author, date, ...props }) => {
     const [descriptionError, setDescriptionError ] = useState(false);
     const [photoError, setPhotoError ] = useState(false);
 
-    console.log(title, price, description, location, photo, date, author.id);
-
     const { register, handleSubmit: validate, formState: { errors } } = useForm();
 
     const handleFileChange = (e) => {
@@ -37,22 +28,11 @@ const AdForm = ({ action, actionText, author, date, ...props }) => {
     };
 
     const handleSubmit = () => {
-       
         setDescriptionError(!description);
         setPhotoError(!photo);
-
         if (title && price && location && description && photo ) {
-            const formData = new FormData();
-            
-            formData.append('title', title);
-            formData.append('price', price);
-            formData.append('location', location);
-            formData.append('description', description);
-            formData.append('author', author.id);
-            formData.append('date', date);
-            formData.append('photo', photo);
-
-            action(formData);
+    
+            action({title, price, description, location, photo, date, author: author._id});
           
         }
        

@@ -52,8 +52,6 @@ exports.login = async (req, res) => {
   try {
     const { login, password } = req.body;
 
-    console.log(login, password);
-
     if (login && typeof login === "string" && password && typeof password === "string") {
 
       const user = await User.findOne({ login });
@@ -68,8 +66,7 @@ exports.login = async (req, res) => {
           
           req.session.user = { login: user.login, id: user._id };
           res.status(200).json( req.session.user );
-          console.log('user', req.session.user)
-
+        
         } else {
           res.status(400).send({ message: "Login or password are incorrect." });
         }
@@ -92,7 +89,7 @@ exports.getUser = async (req, res) => {
     if (req.session.user && req.session.user.id) {
       const loggedUser = await User.findById(req.session.user.id);
       if (loggedUser) {
-        console.log(loggedUser);
+      
         return res.json(loggedUser);
       } else {
         return res.status(404).json({ message: "User not found" });

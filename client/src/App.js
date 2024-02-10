@@ -14,37 +14,55 @@ import LogOut from './components/pages/LogOut/LogOut';
 import { fetchUserData } from './redux/userRedux';
 import CreateAd from './components/views/CreateAd/CreateAd';
 import EditAd from './components/views/EditAd/EditAd';
-import { useParams } from 'react-router-dom';
+import { loadAdsRequest } from './redux/adsRedux';
+import { Button, Spinner } from 'react-bootstrap';
+import { useState } from 'react';
 
 const App = () => {
 
   const dispatch = useDispatch();
 
-  const { adId } = useParams();
+  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(fetchUserData());
+    // Fetch the necessary data for your application
+    Promise.all([dispatch(fetchUserData()), dispatch(loadAdsRequest())])
+      .then(() => {
+        // Data has been fetched, so you can stop loading
+        setTimeout(() => {
+          setLoading(false); 
+        }, 1000); 
+  
+      })
   }, [dispatch]);
 
   return ( 
     <main>
       <Container>
-        <Header   />
-        <Routes>
-          <Route path="/" element={<Home />}/>
-          <Route path="/ads/search/:searchPhrase" element={<SearchResult />}/>
-          <Route path="/ads/:id" element={<Ad />}/>
-          <Route path="/ads" element={<CreateAd />}/>
-          <Route path="/ads/edit/:id" element={<EditAd />} />
-          <Route path="/register" element={<SignUp />} />
-          <Route path="/login" element={<SignIn />} />
-          <Route path="/logout" element={<LogOut />} />
-          <Route path="*" element={<NotFound />}/>
-        </Routes>
+        <Header />
+        {loading ? (
+          <Button variant="tuned-light">
+            <Spinner animation="border" variant="primary" size="lg" />
+            Loading ...
+          </Button>
+        ) : (
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/ads/search/:searchPhrase" element={<SearchResult />} />
+            <Route path="/ads" element={<CreateAd />} /> 
+            <Route path="/ads/:id" element={<Ad />} />
+            <Route path="/ads/edit/:id" element={<EditAd />} />
+            <Route path="/register" element={<SignUp />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/logout" element={<LogOut />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        )}
         <Footer />
       </Container>
-  </main>
-  )
+    </main>
+  );
 };
 
 export default App;

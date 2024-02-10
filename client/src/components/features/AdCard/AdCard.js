@@ -4,7 +4,7 @@ import { IMAGES_URL } from "../../../config";
 import { Link } from "react-router-dom";
 
 const AdCard = ({ad}) => {
-  console.log(ad._id, 'cardid')
+ 
   return(
   <Col className="col-lg-4 col-sm-12 col-md-4 mx-3 py-2" style={{ width:'25rem'}}>
     <Card>

@@ -9,23 +9,20 @@ import { editAdRequest } from "../../../redux/adsRedux";
 const EditAdForm = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
     const { id } = useParams();
-
     const adData = useSelector((state) => getAdById(state, id));
-    
-    const handleSubmit = (formData) => {
-        dispatch(editAdRequest(formData)).then(() => {
-            navigate('/'); 
-        });
-      };
+  
+    const handleSubmit = ad => {
+     console.log(ad);
+     const adForm = {id: adData._id, ad}
+      dispatch(editAdRequest(adForm))
+    };
 
     return (
         <AdForm
-            adId={id}
             action={handleSubmit}
             actionText='Edit advertisment'
-            
+            author={adData.author._id}
             {...adData}
         />
 

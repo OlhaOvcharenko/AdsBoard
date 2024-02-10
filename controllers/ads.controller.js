@@ -94,55 +94,67 @@ exports.postNewAd = async (req, res) => {
   }
 };
 
-exports.editAd = async(req, res) => {
+exports.editAd = async (req, res) => {
   try {
-    const { title, description, date, price, location, author } = req.body;
-    const photo = req.file.filename;
-		const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
-
     if (!req.file) {
-      res.status(400).json({ message: 'Failed file type validation.' });
-      return;
+      return res.status(400).json({ message: 'Failed file type validation.' });
     }
 
+    const { title, description, date, price, location, author } = req.body;
+    const photo = req.file.filename;
+
+    console.log(req.body);
+
     const ad = await Ad.findById(req.params.id);
+    console.log(ad)
+    if (!ad) {
+      return res.status(404).json({ message: 'Bad request' });
+    }
 
-      if (ad) {
-        const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
+    // Delete previous photo if it exists
+    const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
+    if (fs.existsSync(prevPhotoPath)) {
+      fs.unlinkSync(prevPhotoPath);
+    } else {
+      console.error('File does not exist:', prevPhotoPath);
+    }
 
-        if (fs.existsSync(prevPhotoPath)) {
-          fs.unlinkSync(prevPhotoPath);
-        } else {
-          console.error('File does not exist:', prevPhotoPath);
-        }
+    // Sanitize input data
+    const cleanTitle = sanitizeHtml(title);
+    const cleanDescription = sanitizeHtml(description);
+    const cleanLocation = sanitizeHtml(location);
+    const cleanDate = sanitizeHtml(date);
+    const cleanAuthor = sanitizeHtml(author);
 
-        const cleanTitle = sanitizeHtml(title);
-        const cleanDescription = sanitizeHtml(description);
-        const cleanLocation = sanitizeHtml(location);
-        const cleanDate = sanitizeHtml(date);
-        const cleanAuthor = sanitizeHtml(author);
+    // Validate data
+    const updatedAd = await schemaValidation.validateAsync({
+      cleanTitle,
+      cleanDescription,
+      cleanLocation,
+      cleanAuthor,
+      cleanDate,
+      price,
+      fileType: req.file ? await getImageFileType(req.file) : 'unknown'
+    });
 
-        const validatedData = await schemaValidation.validateAsync({cleanTitle, cleanDescription, 
-        cleanLocation, cleanAuthor, cleanDate, price, fileType});
+    console.log(updatedAd);
 
-        if(validatedData) {
-          await ad.updateOne({ $set: { title, description, date, photo, location, author: req.session.user.id, price } });
-          res.json({ message: 'OK' });
-        } else {
-          const path = req.file ? req.file.path : null;
-          fs.unlinkSync(path);
-          res.status(400).json({ message: 'Failed validation' });
-        }
-      } else {
-        const path = req.file ? req.file.path : null;
-        fs.unlinkSync(path);
-        res.status(404).json({ message: 'Not found...' });
-      }
-  
+    if (updatedAd) {
+      await ad.updateOne({ $set: { title: cleanTitle, description: cleanDescription, date: cleanDate, photo, location: cleanLocation, author: req.session.user.id, price } });
+
+      return res.json({ message: 'Ad updated successfully' });
+    } else {
+      // Validation failed
+      const path = req.file ? req.file.path : null;
+      fs.unlinkSync(path);
+      return res.status(400).json({ message: 'Failed validation' });
+    }
   } catch (err) {
+    // Error occurred
     const path = req.file ? req.file.path : null;
     fs.unlinkSync(path);
-    res.status(400).json({ error: 'Bad Request', message: err.message });
+    console.error('Error updating advertisement:', err);
+    return res.status(500).json({ error: 'Internal Server Error', message: err.message });
   }
 };
 

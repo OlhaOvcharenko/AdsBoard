@@ -21,10 +21,9 @@ const CreateAdForm = () => {
   useEffect(() => {
       if (user) {
         setAuthor({
-          id: user.currentUser.user._id, 
+          _id: user.currentUser.user._id, 
           login: user.currentUser.user.login,
         });
-
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
         setDate(formattedDate);
@@ -33,7 +32,9 @@ const CreateAdForm = () => {
 
   const handleSubmit = ad => {
     dispatch(createAdRequest(ad)).then(() => {
+      console.log(ad, createAdRequest, 'ad')
       navigate('/'); 
+      console.log(' ad request dispatched');
     });
   };
 

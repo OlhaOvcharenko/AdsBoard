@@ -14,6 +14,8 @@ export const LOAD_ADS = createActionName('LOAD_ADS');
 export const UPDATE_SEARCHPHRASE = createActionName('UPDATE_SEARCHPHRASE'); 
 export const CREATE_AD = createActionName("CREATE_AD");
 export const EDIT_AD = createActionName("EDIT_AD");
+export const DELETE_AD = createActionName("DELETE_AD");
+
 
 export const startRequest = payload => ({ payload, type: START_REQUEST });
 export const endRequest = payload => ({ payload, type: END_REQUEST });
@@ -23,7 +25,7 @@ export const loadAds = payload => ({ payload, type: LOAD_ADS });
 export const updateSearchPhrase = payload => ({ type: UPDATE_SEARCHPHRASE, payload });  
 export const createAd = payload => ({ type: CREATE_AD, payload });  
 export const editAd = payload => ({ type: EDIT_AD, payload });  
-
+export const deleteAd = payload => ({ type: DELETE_AD, payload });  
 
 /* SELECTORS */
 export const getAllAds = ({ ads }) => ads.data;
@@ -52,17 +54,25 @@ export const loadAdsRequest = () => {
   };
 };
 
-
-export const createAdRequest = (data) => {
-  return async dispatch => {
-
+export const createAdRequest = (newAd) => {
+  return async (dispatch) => {
     dispatch(startRequest({ name: CREATE_AD }));
     try {
-
-      let res = await axios.post(
+      const formData = new FormData();
+      formData.append('title', newAd.title);
+      formData.append('price', newAd.price);
+      formData.append('location', newAd.location);
+      formData.append('description', newAd.description);
+      formData.append('photo', newAd.photo);
+      formData.append('author', newAd.author);
+      formData.append('date', newAd.date);
+      
+      console.log(formData,'new ad form data')
+      const res = await axios.post(
         `${API_URL}/api/ads`,
-        data,
-        {
+        formData,
+        { 
+          body: formData,
           headers: {
             'Content-Type': 'multipart/form-data'
           },
@@ -72,22 +82,29 @@ export const createAdRequest = (data) => {
 
       dispatch(createAd(res.data));
       dispatch(endRequest({ name: CREATE_AD }));
-
-    } catch(e) {
+    } catch (e) {
       dispatch(errorRequest({ name: CREATE_AD, error: e.message }));
     }
-
   };
 };
 
-export const editAdRequest = (ad) => {
-  return async dispatch => {
+export const editAdRequest = (newAd) => {
+  return async (dispatch) => {
     dispatch(startRequest({ name: EDIT_AD }));
     try {
+      const formData = new FormData();
+      formData.append('title', newAd.title);
+      formData.append('price', newAd.price);
+      formData.append('location', newAd.location);
+      formData.append('description', newAd.description);
+      formData.append('photo', newAd.photo); // Ensure newAd.photo is the file object itself
+      formData.append('author', newAd.author);
+      formData.append('date', newAd.date);
       
+      console.log(formData,'new ad form data')
       const res = await axios.put(
-        `${API_URL}/api/ads/edit/${ad._id}`,
-        ad,
+        `${API_URL}/api/ads/edit/${newAd.id}`,
+        formData,
         { 
           headers: {
             'Content-Type': 'multipart/form-data'
@@ -96,13 +113,35 @@ export const editAdRequest = (ad) => {
         },
       );
 
-      dispatch(editAd(res.data));
+      dispatch(editAd(newAd));
+      
+      dispatch(loadAds(res.data))
+      console.log(res.data,'res data')
+     
+    } catch (error) {
+      console.error('Error updating advertisement:', error);
+      throw error;
+    } finally {
       dispatch(endRequest({ name: EDIT_AD }));
-    } catch(e) {
-      dispatch(errorRequest({ name: EDIT_AD, error: e.message }));
     }
   };
 };
+
+
+export const deleteAdsRequest = id => {
+	return dispatch => {
+		const options = {
+			method: 'DELETE',
+      credentials: 'include',
+		}
+
+		fetch(`${API_URL}/api/ads/${id}`, options)
+      .then(() => {dispatch(deleteAd(id))})
+	};
+};
+
+
+
 /* REDUCER */
 export default function reducer(statePart = initialState, action = {}) {
   switch (action.type) {
@@ -118,10 +157,22 @@ export default function reducer(statePart = initialState, action = {}) {
         },
       };
     case CREATE_AD: 
+      console.log('CREATE_AD action received:', statePart.data);
       return { ...statePart, data: [...statePart.data, action.payload] };
 
     case EDIT_AD:
-      return statePart.map(ad => (ad._id === action.payload._id ? { ...ad, ...action.payload } : ad));
+      console.log('EDIT_AD action received:', statePart.data);
+      return {
+        ...statePart,
+        data: statePart.data.map(ad => (ad._id === action.payload._id ? { ...ad, ...action.payload } : ad))
+      };
+
+    case DELETE_AD:
+      return {
+        ...statePart,
+        // Assuming data is an array of ads and you're removing the deleted ad from it
+        data: statePart.data.filter(ad => ad._id !== action.payload),
+      };
 
     case START_REQUEST:
       return {

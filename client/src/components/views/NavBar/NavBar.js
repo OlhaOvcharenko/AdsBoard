@@ -4,6 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { getUser } from '../../../redux/userRedux';
+import { useState } from 'react';
 
 
 const NavBar = () => {

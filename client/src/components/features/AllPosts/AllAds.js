@@ -12,7 +12,7 @@ const AllAds = () => {
   const dispatch = useDispatch();
   const ads = useSelector(getAllAds);
   const request = useSelector(state => getRequest(state, LOAD_ADS));
-  console.log(request)
+
   useEffect(() => {
     dispatch(loadAdsRequest());
   }, [dispatch]);
