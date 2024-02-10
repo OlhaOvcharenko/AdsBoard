@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from './components/pages/Home/Home';
-import Ad from './components/views/Ad/Ad';
 import NotFound from './components/pages/Not Found/NotFound';
 import { Container } from 'react-bootstrap';
 import Header from './components/views/Header/Header';
@@ -17,6 +16,7 @@ import EditAd from './components/views/EditAd/EditAd';
 import { loadAdsRequest } from './redux/adsRedux';
 import { Button, Spinner } from 'react-bootstrap';
 import { useState } from 'react';
+import Ad from './components/pages/Ad/Ad';
 
 const App = () => {
 
