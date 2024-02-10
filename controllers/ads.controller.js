@@ -105,10 +105,10 @@ exports.editAd = async (req, res) => {
 
     console.log(req.body);
 
-    const ad = await Ad.findById(req.params.id);
+    const ad = await Ad.findById({ _id: req.params.id});
     console.log(ad)
     if (!ad) {
-      return res.status(404).json({ message: 'Bad request' });
+      return res.status(404).json({ message: 'Not Found' });
     }
 
     // Delete previous photo if it exists

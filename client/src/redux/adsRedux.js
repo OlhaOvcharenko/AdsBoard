@@ -95,40 +95,42 @@ export const editAdRequest = (newAd) => {
     dispatch(startRequest({ name: EDIT_AD }));
     try {
       const formData = new FormData();
+    
       formData.append('title', newAd.title);
       formData.append('price', newAd.price);
       formData.append('location', newAd.location);
       formData.append('description', newAd.description);
-      formData.append('photo', newAd.photo); // Ensure newAd.photo is the file object itself
+      formData.append('photo', newAd.photo);
       formData.append('author', newAd.author);
       formData.append('date', newAd.date);
-      
-      console.log(formData,'new ad form data')
-      const res = await axios.put(
-        `${API_URL}/api/ads/edit/${newAd.id}`,
-        formData,
-        { 
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          credentials: 'include'
-        },
-      );
 
-      dispatch(editAd(newAd));
-      
-      dispatch(loadAds(res.data))
-      console.log(res.data,'res data')
-     
+      const requestOptions = {
+        method: 'PUT',
+        body: formData,
+        credentials: 'include'
+      };
+
+      fetch(`${API_URL}/api/ads/edit/${newAd.id}`, requestOptions)
+        .then((response) => {
+          if (!response.ok) {
+            console.log("serverError");
+            throw new Error('Network response was not ok');
+          }
+          console.log("success");
+          dispatch(editAd(newAd));
+        })
+        .catch((error) => {
+          console.error(error, "serverError");
+          // Handle server errors
+        });
     } catch (error) {
-      console.error('Error updating advertisement:', error);
-      throw error;
+      console.error(error, "serverError");
+      // Handle server errors
     } finally {
       dispatch(endRequest({ name: EDIT_AD }));
     }
   };
 };
-
 
 export const deleteAdsRequest = id => {
 	return dispatch => {

@@ -80,8 +80,9 @@ const AdForm = ({ action, actionText, author, date,  ...props }) => {
 
             <Col lg={8} xs={12} md={10} className="px-1">
               <Form.Group className="mb-3" controlId="formFile">
-                <Form.Label>Photo:  {props.photo}</Form.Label>
+                <Form.Label>Photo: </Form.Label>
                   <Form.Control
+                    {...register("photo", { required: false })}
                     accept=".jpeg, .png, .gif"
                     onChange={handleFileChange}
                     type="file"
