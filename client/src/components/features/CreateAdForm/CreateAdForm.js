@@ -44,7 +44,7 @@ const CreateAdForm = () => {
   return (
     <AdForm
         action={handleSubmit}
-        actionText="Create advertisement"
+        actionText="Publish"
         author={author}
         date={date}
     />
