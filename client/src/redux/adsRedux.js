@@ -60,6 +60,7 @@ export const createAdRequest = (newAd) => {
     dispatch(startRequest({ name: CREATE_AD }));
     try {
       const formData = new FormData();
+      console.log(newAd)
       formData.append('title', newAd.title);
       formData.append('price', newAd.price);
       formData.append('location', newAd.location);
@@ -95,7 +96,7 @@ export const editAdRequest = (newAd) => {
     dispatch(startRequest({ name: EDIT_AD }));
     try {
       const formData = new FormData();
-    
+       console.log(newAd)
       formData.append('title', newAd.title);
       formData.append('price', newAd.price);
       formData.append('location', newAd.location);
@@ -109,20 +110,19 @@ export const editAdRequest = (newAd) => {
         body: formData,
         credentials: 'include'
       };
+     
+      console.log(requestOptions);
 
-      fetch(`${API_URL}/api/ads/edit/${newAd.id}`, requestOptions)
-        .then((response) => {
-          if (!response.ok) {
-            console.log("serverError");
-            throw new Error('Network response was not ok');
-          }
-          console.log("success");
-          dispatch(editAd(newAd));
-        })
-        .catch((error) => {
-          console.error(error, "serverError");
-          // Handle server errors
-        });
+      const response = await fetch(`${API_URL}/api/ads/edit/${newAd.id}`, requestOptions);
+      const data = await response.json(); // Parse the JSON response
+      
+      if (!response.ok) {
+        console.log("serverError");
+        throw new Error('Network response was not ok');
+      }
+      
+      console.log("success");
+      dispatch(editAd(data)); // Dispatch action with the response data
     } catch (error) {
       console.error(error, "serverError");
       // Handle server errors

@@ -95,18 +95,19 @@ exports.postNewAd = async (req, res) => {
 };
 
 exports.editAd = async (req, res) => {
+  const { title, description, date, price, location, author } = req.body;
+  
   try {
+    
     if (!req.file) {
       return res.status(400).json({ message: 'Failed file type validation.' });
     }
-
-    const { title, description, date, price, location, author } = req.body;
+    
     const photo = req.file.filename;
-
-    console.log(req.body);
+    console.log(photo);
 
     const ad = await Ad.findById({ _id: req.params.id});
-    console.log(ad)
+    //console.log(ad)
     if (!ad) {
       return res.status(404).json({ message: 'Not Found' });
     }
@@ -140,11 +141,21 @@ exports.editAd = async (req, res) => {
     console.log(updatedAd);
 
     if (updatedAd) {
-      await ad.updateOne({ $set: { title: cleanTitle, description: cleanDescription, date: cleanDate, photo, location: cleanLocation, author: req.session.user.id, price } });
-
-      return res.json({ message: 'Ad updated successfully' });
+      // Update the ad object with the new values
+      ad.title = cleanTitle;
+      ad.description = cleanDescription;
+      ad.date = cleanDate;
+      ad.photo = photo;
+      ad.location = cleanLocation;
+      ad.author = req.session.user.id;
+      ad.price = price;
+    
+      // Save the updated ad object in the database
+      await ad.save();
+    
+      return res.json(ad);
     } else {
-      // Validation failed
+     
       const path = req.file ? req.file.path : null;
       fs.unlinkSync(path);
       return res.status(400).json({ message: 'Failed validation' });

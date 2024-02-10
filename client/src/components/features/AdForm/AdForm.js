@@ -6,8 +6,8 @@ import { useState } from "react";
 import { Card } from "react-bootstrap";
 import { useForm } from 'react-hook-form';
 
-import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css';
+//import ReactQuill from "react-quill";
+//import 'react-quill/dist/quill.snow.css';
 
 
 const AdForm = ({ action, actionText, author, date,  ...props }) => {
@@ -91,9 +91,16 @@ const AdForm = ({ action, actionText, author, date,  ...props }) => {
                 </Form.Group>
 
                 <Form.Group className="mb-4" controlId="floatingTextarea1">
-                    <Form.Label>Short description</Form.Label>
-                    <ReactQuill theme="snow" style={{ height: '200px' }} value={description} onChange={setDescription} />
-                    { descriptionError && (<small className="d-block form-text text-danger mt-5">Description can't be empty</small>)}
+                  <Form.Label>Short description</Form.Label>
+                    <textarea 
+                      className="form-control" 
+                      style={{ height: '200px' }} 
+                      value={description} 
+                      onChange={e=>setDescription(e.target.value)}
+                    />
+                    { descriptionError &&  description.lengs < 20 (
+                      <small className="d-block form-text text-danger mt-2">Description can't be empty(min 20 characters)</small>
+                    )}
                 </Form.Group>
 
                 <Card.Text className="mx-3 p-5 d-flex justify-content-between align-items-center">

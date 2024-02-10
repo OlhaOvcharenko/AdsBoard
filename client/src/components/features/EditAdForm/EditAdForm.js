@@ -17,12 +17,7 @@ const EditAdForm = () => {
     const handleSubmit = ad => {
      console.log(ad);
      const adForm = {id: adData._id, ad}
-      dispatch(editAdRequest(adForm)).then(() => {
-        alert('Advertisement updated successfully');
-        dispatch(loadAdsRequest()).then(() => {
-          navigate('/');
-        });
-      });
+      dispatch(editAdRequest(adForm));
     };
 
     return (

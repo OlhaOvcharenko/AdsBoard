@@ -66,11 +66,9 @@ const SingleAd = (props) => {
                   <img src={`${IMAGES_URL}/${authorImg}`} alt="Avatar" style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }} />
                   <i>{adData.author.login}</i>
                 </div>
-                <div>
-                  <i>Published Date: {adData.date}</i>
-                </div>
+                <p><i>Published Date: {adData.date}</i></p> {/* Updated */}
               </Card.Text>
-
+                          
               {authorOfAd && (
                 <Button as={Link} key={props.id} to={`/ads/edit/${adData._id}`} className="mt-2 mx-4" variant="secondary"> Edit advert </Button>
               )}
