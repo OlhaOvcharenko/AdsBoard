@@ -1,5 +1,5 @@
 
-import { getAllAds, getRequest, LOAD_ADS } from "../../../redux/adsRedux";
+import { getAllAds, getRequest, getRequests, LOAD_ADS } from "../../../redux/adsRedux";
 import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
@@ -11,30 +11,31 @@ import AdCard from "../AdCard/AdCard";
 const AllAds = () => {
   const dispatch = useDispatch();
   const ads = useSelector(getAllAds);
-  const request = useSelector(state => getRequest(state, LOAD_ADS));
+  console.log(ads);
+  const requests = useSelector(getRequests);
+  console.log(requests)
 
   useEffect(() => {
     dispatch(loadAdsRequest());
   }, [dispatch]);
 
-  //const sortedAds = ads.slice().sort((a, b) => a.title.localeCompare(b.title));
+  const sortedAds = ads.slice().sort((a, b) => a.title.localeCompare(b.title));
 
-  if (!request || !request.success) {
-    return <Spinner color="primary" className="standard-box d-block me-auto ms-auto" />;
-  } else {
-    return (
+  return (
+    (requests['app/ads/LOAD_ADS'] && requests['app/ads/LOAD_ADS'].success && ads.length > 0) ? (
       <section className="Posts">
-        <h1 className="text-center py-4"> ADVERTISMENTS</h1>
+        <h1 className="text-center py-4">ADVERTISEMENTS</h1>
         <Search />
         <div className="row my-3">
-        {ads.map((ad) => (
-          <AdCard key={ad._id} ad={ad} />
+          {sortedAds.map((ad) => (
+            <AdCard key={ad._id} ad={ad} />
           ))}
         </div>
       </section>
-    );
-  }
-  
+    ) : (
+      <Spinner color="primary" className="standard-box d-block me-auto ms-auto" />
+    )
+  );
 };
   
   export default AllAds;

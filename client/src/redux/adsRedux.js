@@ -2,6 +2,17 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import initialState from './initialState';
 
+/* SELECTORS */
+export const getAllAds = ({ ads }) => ads.data;
+export const getRequests = ({ads}) => ads.requests;
+
+export const getAdById = ({ ads }, adId) =>
+  ads.data.find((ad) => ad._id === adId);
+
+export const getSearchedAds = ({ads}, searchPhrase ) =>
+  ads.data.filter(ad => ad.title.toLowerCase().includes(searchPhrase.toLowerCase()) || ad.location.toLowerCase().includes(searchPhrase.toLowerCase()) );
+
+
 /* ACTIONS */
 const reducerName = 'ads';
 const createActionName = name => `app/${reducerName}/${name}`;
@@ -27,16 +38,6 @@ export const createAd = payload => ({ type: CREATE_AD, payload });
 export const editAd = payload => ({ type: EDIT_AD, payload });  
 export const deleteAd = payload => ({ type: DELETE_AD, payload });  
 
-/* SELECTORS */
-export const getAllAds = ({ ads }) => ads.data;
-
-export const getAdById = ({ ads }, adId) =>
-  ads.data.find((ad) => ad._id === adId);
-
-export const getSearchedAds = ({ads}, searchPhrase ) =>
-  ads.data.filter(ad => ad.title.toLowerCase().includes(searchPhrase.toLowerCase()) || ad.location.toLowerCase().includes(searchPhrase.toLowerCase()) );
-
-export const getRequest = ({ ads }, name) => ads.requests[name];
 
 /* THUNKS */
 export const loadAdsRequest = () => {
@@ -175,29 +176,11 @@ export default function reducer(statePart = initialState, action = {}) {
       };
 
     case START_REQUEST:
-      return {
-        ...statePart,
-        requests: {
-          ...statePart.requests,
-          [action.payload.name]: { pending: true, error: null, success: false },
-        },
-      };
+      return { ...statePart, requests: {...statePart.requests, [action.payload.name]: { pending: true, error: null, success: false }} };
     case END_REQUEST:
-      return {
-        ...statePart,
-        requests: {
-          ...statePart.requests,
-          [action.payload.name]: { pending: false, error: null, success: true },
-        },
-      };
+      return { ...statePart, requests: { ...statePart.requests, [action.payload.name]: { pending: false, error: null, success: true }} };
     case ERROR_REQUEST:
-      return {
-        ...statePart,
-        requests: {
-          ...statePart.requests,
-          [action.payload.name]: { pending: false, error: action.payload.error, success: false },
-        },
-      };
+      return { ...statePart, requests: { ...statePart.requests, [action.payload.name]: { pending: false, error: action.payload.error, success: false }} };
     default:
       return statePart;
   }
