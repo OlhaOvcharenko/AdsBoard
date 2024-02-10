@@ -34,9 +34,7 @@ const AdForm = ({ action, actionText, author, date,  ...props }) => {
     
             action({title, price, description, location, photo, date, author: author._id});
           
-        }
-       
-
+        } 
     };
      
     return (

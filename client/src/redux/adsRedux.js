@@ -81,7 +81,8 @@ export const createAdRequest = (newAd) => {
         },
       );
 
-      dispatch(createAd(res.data));
+      //dispatch(createAd(res.data));
+      dispatch(loadAds(res.data));
       dispatch(endRequest({ name: CREATE_AD }));
     } catch (e) {
       dispatch(errorRequest({ name: CREATE_AD, error: e.message }));

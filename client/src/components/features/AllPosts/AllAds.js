@@ -7,6 +7,7 @@ import { loadAdsRequest } from "../../../redux/adsRedux";
 import { useEffect } from "react";
 import Search from "../SearchForm/SearchForm";
 import AdCard from "../AdCard/AdCard";
+import { useMemo } from "react";
 
 const AllAds = () => {
   const dispatch = useDispatch();
@@ -18,8 +19,18 @@ const AllAds = () => {
   useEffect(() => {
     dispatch(loadAdsRequest());
   }, [dispatch]);
-
-  const sortedAds = ads.slice().sort((a, b) => a.title.localeCompare(b.title));
+  
+  const sortedAds = [...ads].sort((a, b) => {
+    const titleA = a.title.toLowerCase();
+    const titleB = b.title.toLowerCase();
+    if (titleA < titleB) {
+      return -1;
+    }
+    if (titleA > titleB) {
+      return 1;
+    }
+    return 0;
+  });
 
   return (
     (requests['app/ads/LOAD_ADS'] && requests['app/ads/LOAD_ADS'].success && ads.length > 0) ? (
@@ -38,4 +49,4 @@ const AllAds = () => {
   );
 };
   
-  export default AllAds;
+export default AllAds;

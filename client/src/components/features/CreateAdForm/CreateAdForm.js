@@ -1,19 +1,20 @@
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 
-import { createAdRequest } from "../../../redux/adsRedux";
+import { createAdRequest, getRequests } from "../../../redux/adsRedux";
 import { useSelector } from "react-redux";
 import { getUser } from '../../../redux/userRedux';
 import { useState } from "react";
 import { useEffect } from "react";
+import { loadAdsRequest } from "../../../redux/adsRedux";
 
 import AdForm from "../AdForm/AdForm";
 
 const CreateAdForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector(getUser);
 
+  const user = useSelector(getUser);
   const [author, setAuthor] = useState('');
   const [date, setDate] = useState('');
  
@@ -32,20 +33,22 @@ const CreateAdForm = () => {
 
   const handleSubmit = ad => {
     dispatch(createAdRequest(ad)).then(() => {
-      console.log(ad, createAdRequest, 'ad')
-      navigate('/'); 
-      console.log(' ad request dispatched');
+      alert('Advertisement created successfully');
+      dispatch(loadAdsRequest()).then(() => {
+        navigate('/');
+      });
     });
   };
 
+
   return (
-      <AdForm
-          action={handleSubmit}
-          actionText="Create advertisement"
-          author={author}
-          date={date}
-      />
-  );
+    <AdForm
+        action={handleSubmit}
+        actionText="Create advertisement"
+        author={author}
+        date={date}
+    />
+  )
 };
 
 export default CreateAdForm;

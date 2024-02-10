@@ -5,6 +5,9 @@
   "author": "<ovcharenko.olga.2014@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "auth": "^1.0.2",
     "bcryptjs": "^2.4.3",
     "bootstrap": "5.1.3",

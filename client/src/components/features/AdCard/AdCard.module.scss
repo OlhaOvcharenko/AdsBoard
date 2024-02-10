@@ -1,0 +1,32 @@
+.card-container {
+  position: relative;
+}
+
+.icon-wrapper {
+  position: absolute; 
+  left: 80%; 
+  margin-top: -20%;
+}
+
+.circle-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: black; 
+  transition: background-color 0.3s ease;
+  text-decoration: none; 
+  color: inherit;
+
+  &:hover {
+    background-color: #aaa; 
+  }
+}
+
+.icon-wrapper .icon {
+  border-radius: 50%;
+  color: #fff; 
+  padding: 0.3rem;
+}
