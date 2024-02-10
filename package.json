@@ -27,7 +27,8 @@
     "redux": "4.1.2",
     "redux-devtools-extension": "2.13.9",
     "sanitize-html": "^2.11.0",
-    "sass": "1.65.1"
+    "sass": "1.65.1",
+    "scss": "^0.2.4"
   },
   "repository": "https://github.com/OlhaOvcharenko/AdsBoard.git"
 }
