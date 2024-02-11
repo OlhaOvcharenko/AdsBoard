@@ -5,7 +5,6 @@ import  { Button } from "react-bootstrap";
 import { useState } from "react";
 import { Card } from "react-bootstrap";
 import { useForm } from 'react-hook-form';
-import { useEffect } from "react";
 //import ReactQuill from "react-quill";
 //import 'react-quill/dist/quill.snow.css';
 

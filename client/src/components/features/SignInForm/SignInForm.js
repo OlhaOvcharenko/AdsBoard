@@ -8,6 +8,8 @@ import { Alert, Spinner } from "react-bootstrap";
 import { API_URL } from "../../../config";
 import { useDispatch } from "react-redux";
 import { logIn } from "../../../redux/userRedux";
+import { useForm } from 'react-hook-form';
+
 
 const SignInForm = () => {
 
@@ -18,10 +20,11 @@ const SignInForm = () => {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  const { register, handleSubmit: validate, formState: { errors } } = useForm();
 
-  const handleSubmit =(e) => {
-    e.preventDefault();
-    console.log(login,password, 'login data')
+  const handleSubmit =() => {
+
     const options = {
       method: "POST",
       headers: {
@@ -52,15 +55,11 @@ const SignInForm = () => {
 
   return (
     <div>
-      <Form className="col-12 col-sm-4 mx-auto" onSubmit={handleSubmit}>
+      <Form className="col-12 col-sm-4 mx-auto" onSubmit={validate(handleSubmit)}>
         
         <h1 className="my-4 text-center">Sign in</h1>
 
-        {status === "success" && (
-        <Alert variant="success">
-          <Alert.Heading>Success!</Alert.Heading>
-          <p>You have successfully logged in.</p>
-        </Alert> )}
+    
         {status === "serverError" && (
         <Alert variant="danger">
           <Alert.Heading>Something  went wrong...</Alert.Heading>
@@ -79,14 +78,26 @@ const SignInForm = () => {
 
         <Form.Group className="mb-3" controlId="formLogin">
           <Form.Label>Login</Form.Label>
-          <Form.Control type="text" value={login} onChange={e => setLogin(e.target.value)} placeholder="Enter login"/>
+          <Form.Control type="text"
+            {...register("login", { required: true})} 
+            value={login} onChange={e => setLogin(e.target.value)} 
+            placeholder="Enter login"
+          />
+          {errors.login && <small className="d-block form-text text-danger mt-2">Login can not be empty.</small>}
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formPassword">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password"/>
+          <Form.Control
+            {...register("password", { required: true})}  
+            type="password" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            placeholder="Password"
+          />
+          {errors.password && <small className="d-block form-text text-danger mt-2">Please, enter your password.</small>}
         </Form.Group>
-        <Button variant="primary" type="submit" className="my-3">
+        <Button variant="secondary" type="submit" className="my-3 mx-3">
           Submit
         </Button>
     

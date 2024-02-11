@@ -3,6 +3,7 @@ import { Form } from "react-bootstrap";
 import  { Button } from "react-bootstrap";
 import { API_URL } from "../../../config";
 import { Alert, Spinner } from "react-bootstrap";
+import { useForm } from 'react-hook-form';
 
 const SignUpForm = () => {
 
@@ -11,41 +12,49 @@ const SignUpForm = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
+  
+  const [avatarError, setAvatarError] = useState(false);
+  const { register, handleSubmit: validate, formState: { errors } } = useForm();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
+  
+    setAvatarError(!avatar);
 
-    const fd = new FormData();
-    fd.append("login", login);
-    fd.append("password", password);
-    fd.append("phoneNumber", phoneNumber);
-    fd.append("avatar", avatar);
+    if (login, password, phoneNumber, avatar){
+      const fd = new FormData();
+      fd.append("login", login);
+      fd.append("password", password);
+      fd.append("phoneNumber", phoneNumber);
+      fd.append("avatar", avatar);
+    
+    
+      const options = {
+        method: "POST",
+        body: fd,
+      };
 
-    const options = {
-      method: "POST",
-      body: fd,
-    };
+      setStatus("loading");
+      fetch(`${API_URL}/auth/register`, options)
 
-    setStatus("loading");
-    fetch(`${API_URL}/auth/register`, options)
-      .then((res) => {
-        if (res.status === 201) {
-          setStatus("success");
-        } else if (res.status === 400) {
-          setStatus("clientError");
-        } else if (res.status === 409) {
-          setStatus("loginError");
-        } else {
+        .then((res) => {
+          if (res.status === 201) {
+            setStatus("success");
+          } else if (res.status === 400) {
+            setStatus("clientError");
+          } else if (res.status === 409) {
+            setStatus("loginError");
+          } else {
+            setStatus("serverError");
+          }
+        })
+        .catch((err) => {
           setStatus("serverError");
-        }
-      })
-      .catch((err) => {
-        setStatus("serverError");
-      });
+        });
+    }
   };
 
   return (
-    <Form onSubmit={handleSubmit} className="col-12 col-sm-4 mx-auto" >
+    <Form onSubmit={validate(handleSubmit)} className="col-12 col-sm-4 mx-auto" >
       <h3 className="mb-4">Sign up!</h3>
       {status === "success" && (
         <Alert variant="success">
@@ -78,37 +87,44 @@ const SignUpForm = () => {
       )}
       <Form.Group className="mb-3" controlId="formLogin">
         <Form.Label>Login</Form.Label>
-        <Form.Control
-          value={login}
-          onChange={(e) => setLogin(e.target.value)}
-          type="text"
-          placeholder="Enter your login"
+        <Form.Control type="text"
+          {...register("login", { required: true})} 
+          value={login} onChange={e => setLogin(e.target.value)} 
+          placeholder="Enter login"
         />
+        {errors.login && <small className="d-block form-text text-danger mt-2">Login can not be empty.</small>}
       </Form.Group>
       <Form.Group className="mb-3" controlId="formPassword">
         <Form.Label>Password</Form.Label>
         <Form.Control
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
+          {...register("password", { required: true})}  
+          type="password" 
+          value={password} 
+          onChange={e => setPassword(e.target.value)} 
           placeholder="Password"
         />
+        {errors.password && <small className="d-block form-text text-danger mt-2">Please, enter your password.</small>}
       </Form.Group>
       <Form.Group className="mb-3" controlId="formPhone">
         <Form.Label>Phone</Form.Label>
         <Form.Control
+          {...register("phoneNumber", { required: true, minLength:8, maxLength:12})}  
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           type="tel"
           placeholder="Enter phone number"
         />
+        {errors.phoneNumber && <small className="d-block form-text text-danger mt-2">Please add your mobile phone.</small>}
       </Form.Group>
       <Form.Group className="mb-3" controlId="formFile">
         <Form.Label>Avatar</Form.Label>
         <Form.Control
+          {...register("avatar", { required: true})} 
+          accept=".jpeg, .png, .gif" 
           onChange={(e) => setAvatar(e.target.files[0])}
           type="file"
         />
+        {avatarError && (<small className="d-block form-text text-danger mt-2">Image is required</small>)}
       </Form.Group>
       <Button type="submit" variant="secondary">
         Submit

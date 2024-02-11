@@ -3,28 +3,42 @@ import { useEffect } from "react";
 import { logout} from "../../../redux/userRedux";
 import { API_URL } from "../../../config";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { Alert } from "react-bootstrap";
 
 
 const LogOut = () => {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    const options = {
-      method: "DELETE",
+    const logoutUser = async () => {
+      try {
+        const options = {
+          method: 'DELETE',
+        };
+        await fetch(`${API_URL}/auth/logout`, options);
+        dispatch(logout());
+        setTimeout(() => {
+          window.location.reload();
+          
+          navigate('/')
+        },2000);
+       
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
     };
 
-    fetch(`${API_URL}/auth/logout`, options)
-    .then((user) => {
-      console.log('user logged out')
-      dispatch(logout(user));
-      navigate('/');
-    })
-  }, [dispatch]); 
-   
-  return null;
+    logoutUser();
+  }, [dispatch]);
+
+  return (
+    <Alert>
+      <Alert.Heading>You have been logged out!</Alert.Heading>
+    </Alert>
+  )
 };
+
 
 export default LogOut;
