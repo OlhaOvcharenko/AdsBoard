@@ -77,7 +77,7 @@ const SignUpForm = () => {
         </Spinner>
       )}
       <Form.Group className="mb-3" controlId="formLogin">
-        <Form.Label>login</Form.Label>
+        <Form.Label>Login</Form.Label>
         <Form.Control
           value={login}
           onChange={(e) => setLogin(e.target.value)}
@@ -86,7 +86,7 @@ const SignUpForm = () => {
         />
       </Form.Group>
       <Form.Group className="mb-3" controlId="formPassword">
-        <Form.Label>password</Form.Label>
+        <Form.Label>Password</Form.Label>
         <Form.Control
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -95,7 +95,7 @@ const SignUpForm = () => {
         />
       </Form.Group>
       <Form.Group className="mb-3" controlId="formPhone">
-        <Form.Label>phone</Form.Label>
+        <Form.Label>Phone</Form.Label>
         <Form.Control
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
@@ -104,14 +104,14 @@ const SignUpForm = () => {
         />
       </Form.Group>
       <Form.Group className="mb-3" controlId="formFile">
-        <Form.Label>avatar</Form.Label>
+        <Form.Label>Avatar</Form.Label>
         <Form.Control
           onChange={(e) => setAvatar(e.target.files[0])}
           type="file"
         />
       </Form.Group>
-      <Button type="submit" variant="primary">
-        submit
+      <Button type="submit" variant="secondary">
+        Submit
       </Button>
     </Form>
   );

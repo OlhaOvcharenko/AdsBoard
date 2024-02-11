@@ -68,14 +68,10 @@ const SignInForm = () => {
         </Alert>)}
         {status === "clientError" && (
         <Alert variant="danger">
-          <Alert.Heading>Not enought data.</Alert.Heading>
-          <p>You have to fill all the fileds.</p>
+          <Alert.Heading>Wrong data</Alert.Heading>
+          <p> Login or password incorrect.</p>
         </Alert>)}
-        {status === "loginError" && (
-        <Alert variant="warning">
-          <Alert.Heading>Login already in use.</Alert.Heading>
-          <p>You have to use another login.</p>
-        </Alert>)}
+  
         
         {status === "loading" && (
         <Spinner color="primary" className="standard-box d-block me-auto ms-auto" />

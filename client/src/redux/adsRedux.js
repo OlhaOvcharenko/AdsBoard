@@ -94,38 +94,35 @@ export const createAdRequest = (newAd) => {
 export const editAdRequest = (newAd) => {
   return async (dispatch) => {
     dispatch(startRequest({ name: EDIT_AD }));
+    
     try {
       const formData = new FormData();
-       console.log(newAd)
-      formData.append('title', newAd.title);
-      formData.append('price', newAd.price);
-      formData.append('location', newAd.location);
-      formData.append('description', newAd.description);
-      formData.append('photo', newAd.photo);
-      formData.append('author', newAd.author);
-      formData.append('date', newAd.date);
+      formData.append('title', newAd.ad.title);
+      formData.append('price', newAd.ad.price);
+      formData.append('location', newAd.ad.location);
+      formData.append('description', newAd.ad.description);
+      formData.append('photo', newAd.ad.photo);
+      formData.append('author', newAd.ad.author);
+      formData.append('date', newAd.ad.date);
 
       const requestOptions = {
         method: 'PUT',
         body: formData,
         credentials: 'include'
       };
-     
-      console.log(requestOptions);
 
       const response = await fetch(`${API_URL}/api/ads/edit/${newAd.id}`, requestOptions);
-      const data = await response.json(); // Parse the JSON response
-      
+      const data = await response.json();
+      console.log(response, 'response');
+      console.log(data, 'data')
       if (!response.ok) {
-        console.log("serverError");
         throw new Error('Network response was not ok');
       }
-      
-      console.log("success");
-      dispatch(editAd(data)); // Dispatch action with the response data
+
+      dispatch(editAd(data));
     } catch (error) {
       console.error(error, "serverError");
-      // Handle server errors
+     
     } finally {
       dispatch(endRequest({ name: EDIT_AD }));
     }

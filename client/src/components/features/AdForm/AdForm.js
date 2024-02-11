@@ -5,38 +5,56 @@ import  { Button } from "react-bootstrap";
 import { useState } from "react";
 import { Card } from "react-bootstrap";
 import { useForm } from 'react-hook-form';
-
+import { useEffect } from "react";
 //import ReactQuill from "react-quill";
 //import 'react-quill/dist/quill.snow.css';
 
 
-const AdForm = ({ action, actionText, author, date,  ...props }) => {
+const AdForm = ({ action, actionText, author, date, img, ...props }) => {
 
-    const [title, setTitle] = useState(props.title || '');
-    const [price, setPrice] = useState(props.price || '');
-    const [description, setDescription] = useState(props.description || '');
-    const [location, setLocation] = useState(props.location || '');
-    const [photo, setPhoto] = useState(props.photo || '');
-    const [descriptionError, setDescriptionError ] = useState(false);
-    const [photoError, setPhotoError ] = useState(false);
+  const [title, setTitle] = useState(props.title || '');
+  const [price, setPrice] = useState(props.price || '');
+  const [description, setDescription] = useState(props.description || '');
+  const [location, setLocation] = useState(props.location || '');
+  const [photo, setPhoto] = useState(null);
+  const [descriptionError, setDescriptionError ] = useState(false);
+  const [photoError, setPhotoError ] = useState(false);
 
-    const { register, handleSubmit: validate, formState: { errors } } = useForm();
+  const { register, handleSubmit: validate, formState: { errors } } = useForm();
 
-    const handleFileChange = (e) => {
-      const file = e.target.files[0];
+  
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
       setPhoto(file);
-    };
+    }
+  };
 
-    const handleSubmit = () => {
-      setDescriptionError(!description);
-      setPhotoError(!photo);
-      if (title && price && location && description && photo ) {
+  const handleSubmit = () => {
 
-        action({title, price, description, location, photo, date, author: author._id});
-        
-      } 
-    };
-     
+    setDescriptionError(!description);
+    setPhotoError(!photo);
+    
+    if (title && price && location && description) {
+      const adData = {
+        title,
+        price,
+        description,
+        location,
+        date,
+        author: author._id
+      };
+  
+      if (photo) {
+        // If a new photo is selected, pass it along with other data
+        action({...adData, photo});
+      } else {
+        // If no new photo is selected, pass the initial photo value
+        action({...adData, photo: img});
+      }
+    }    
+  } 
+
   return (
     <section>
       <Row className="d-flex flex-column"> 
@@ -47,12 +65,12 @@ const AdForm = ({ action, actionText, author, date,  ...props }) => {
               <Form.Group className="mb-3 py-2 px-1" controlId="formGroupTitle">
                 <Form.Label>Title</Form.Label>
                   <Form.Control
-                    {...register("title", { required: true, minLength: 5 })}
+                    {...register("title", { required: true, minLength: 10 })}
                       value={title}
                       onChange={e => setTitle(e.target.value)}
                       type="text" placeholder="Enter title"
                     />
-                      {errors.title && <small className="d-block form-text text-danger mt-2">This field is required (min 5 characters).</small>}
+                      {errors.title && <small className="d-block form-text text-danger mt-2">This field is required (min 10 characters).</small>}
                   </Form.Group>
 
                   <Form.Group className="mb-3 px-1" controlId="formGroupLocation">
@@ -80,9 +98,10 @@ const AdForm = ({ action, actionText, author, date,  ...props }) => {
 
             <Col lg={8} xs={12} md={10} className="px-1">
               <Form.Group className="mb-3" controlId="formFile">
-                <Form.Label>Photo: </Form.Label>
+                <Form.Label>Photo:</Form.Label>
                   <Form.Control
                     {...register("photo", { required: false })}
+                 
                     accept=".jpeg, .png, .gif"
                     onChange={handleFileChange}
                     type="file"
@@ -120,7 +139,6 @@ const AdForm = ({ action, actionText, author, date,  ...props }) => {
     </Row>
   </section>
   )
-
 }
 
 export default AdForm;
