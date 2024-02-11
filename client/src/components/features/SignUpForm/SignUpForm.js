@@ -20,7 +20,7 @@ const SignUpForm = () => {
   
     setAvatarError(!avatar);
 
-    if (login, password, phoneNumber, avatar){
+    if (login && password && phoneNumber && avatar){
       const fd = new FormData();
       fd.append("login", login);
       fd.append("password", password);

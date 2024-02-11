@@ -1,5 +1,4 @@
 import { API_URL } from "../config";
-import initialState from "./initialState";
 
 //selector
 export const getUser = ({user}) => user;

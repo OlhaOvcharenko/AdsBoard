@@ -5,7 +5,6 @@ import { Col } from "react-bootstrap";
 import { IMAGES_URL } from "../../../config";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
 import { deleteAdsRequest, getAdById } from "../../../redux/adsRedux";
 import { getUser } from "../../../redux/userRedux";
 import { Link } from "react-router-dom";

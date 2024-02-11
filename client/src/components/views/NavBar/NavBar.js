@@ -1,18 +1,16 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { getUser, logout } from '../../../redux/userRedux';
+import { getUser} from '../../../redux/userRedux';
 import styles from '../NavBar/NavBar.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAd } from '@fortawesome/free-solid-svg-icons';
-import { useEffect } from 'react';
 
 
 const NavBar = () => {
   const user = useSelector(getUser); 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {

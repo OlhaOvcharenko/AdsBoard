@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 
-import { createAdRequest, getRequests } from "../../../redux/adsRedux";
+import { createAdRequest} from "../../../redux/adsRedux";
 import { useSelector } from "react-redux";
 import { getUser } from '../../../redux/userRedux';
 import { loadAdsRequest } from "../../../redux/adsRedux";

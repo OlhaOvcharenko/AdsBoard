@@ -21,7 +21,7 @@ const LogOut = () => {
         dispatch(logout());
         setTimeout(() => {
           window.location.reload();
-          
+
           navigate('/')
         },2000);
        
@@ -31,7 +31,7 @@ const LogOut = () => {
     };
 
     logoutUser();
-  }, [dispatch]);
+  }, [dispatch, navigate]);
 
   return (
     <Alert>
