@@ -60,7 +60,7 @@ export const createAdRequest = (newAd) => {
     dispatch(startRequest({ name: CREATE_AD }));
     try {
       const formData = new FormData();
-      console.log(newAd)
+
       formData.append('title', newAd.title);
       formData.append('price', newAd.price);
       formData.append('location', newAd.location);
@@ -68,8 +68,7 @@ export const createAdRequest = (newAd) => {
       formData.append('photo', newAd.photo);
       formData.append('author', newAd.author);
       formData.append('date', newAd.date);
-      
-      console.log(formData,'new ad form data')
+     
       const res = await axios.post(
         `${API_URL}/api/ads`,
         formData,
@@ -82,8 +81,8 @@ export const createAdRequest = (newAd) => {
         },
       );
 
-      //dispatch(createAd(res.data));
-      dispatch(loadAds(res.data));
+      dispatch(createAd(res.data));
+      //dispatch(loadAds(res.data));
       dispatch(endRequest({ name: CREATE_AD }));
     } catch (e) {
       dispatch(errorRequest({ name: CREATE_AD, error: e.message }));
@@ -147,7 +146,6 @@ export const deleteAdsRequest = id => {
 export default function reducer(statePart = initialState, action = {}) {
   switch (action.type) {
     case LOAD_ADS:
-      console.log('LOAD_ADS action received:', action.payload);
       return { ...statePart, data: [...action.payload] };
     case UPDATE_SEARCHPHRASE:
       return {
@@ -158,11 +156,9 @@ export default function reducer(statePart = initialState, action = {}) {
         },
       };
     case CREATE_AD: 
-      console.log('CREATE_AD action received:', statePart.data);
       return { ...statePart, data: [...statePart.data, action.payload] };
 
     case EDIT_AD:
-      console.log('EDIT_AD action received:', statePart.data);
       return {
         ...statePart,
         data: statePart.data.map(ad => (ad._id === action.payload._id ? { ...ad, ...action.payload } : ad))

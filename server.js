@@ -42,7 +42,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Session configuration
-app.use(session({secret:'xyz567', store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false}));
+app.use(session({secret: "xyz567", store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false}));
 
 // API routes
 const adsRoutes = require('./routes/ads.routes');

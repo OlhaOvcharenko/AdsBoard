@@ -10,6 +10,7 @@ const AdCard = ({ ad }) => {
     
     <Col className="col-lg-4 col-sm-12 col-md-8 mx-3 py-2" style={{ maxWidth: '18rem' }}>
       <Card className="shadow" style={{ borderRadius: '10px' }}>
+
         <Card.Body className="p-0">
           <Card.Img variant="top mb-2" src={`${IMAGES_URL}/${ad.photo}`} style={{ height: '20rem', objectFit: 'cover', borderRadius: '10px' }} />
           <h5 className="px-2">{ad.title}</h5>
@@ -24,6 +25,7 @@ const AdCard = ({ ad }) => {
             </div>
           </div>
         </Card.Body>
+        
       </Card>
     </Col>
   

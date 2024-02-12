@@ -24,9 +24,7 @@ const SingleAd = (props) => {
   const user = useSelector(getUser);
 
   const authorImg = adData.author.avatar;
-  console.log(authorImg)
-
-
+ 
   const handleDelete = () => {
     dispatch(deleteAdsRequest(id))
     navigate('/'); 

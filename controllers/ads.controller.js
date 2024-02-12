@@ -99,26 +99,25 @@ exports.editAd = async (req, res) => {
   try {
    
     const photo = req.file?.filename;
-    console.log(photo);
-
     const ad = await Ad.findById({ _id: req.params.id});
-    console.log(ad)
+ 
     if (!ad) {
       return res.status(404).json({ message: 'Not Found' });
     }
 
     if(photo) {
-    const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
+      const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
+
       if (fs.existsSync(prevPhotoPath)) {
         fs.unlinkSync(prevPhotoPath);
       } else {
         console.error('File does not exist:', prevPhotoPath);
       }
 
-       const fileType = await getImageFileType(req.file);
-       if(fileType === 'unknown'){
-         return res.status(400).json({message: 'Unsupported file type.'})
-       }
+      const fileType = await getImageFileType(req.file);
+      if(fileType === 'unknown'){
+        return res.status(400).json({message: 'Unsupported file type.'})
+      }
     }
 
     // Sanitize input data
@@ -139,10 +138,8 @@ exports.editAd = async (req, res) => {
       //fileType: photo ? await getImageFileType(req.file) : 'image/png'
     });
 
-    console.log(updatedAd);
 
     if (updatedAd) {
-      // Update the ad object with the new values
       ad.title = cleanTitle;
       ad.description = cleanDescription;
       ad.date = cleanDate;
@@ -151,7 +148,6 @@ exports.editAd = async (req, res) => {
       ad.author = req.session.user.id;
       ad.price = price;
     
-      // Save the updated ad object in the database
       await ad.save();
     
       return res.json(ad);
@@ -162,7 +158,7 @@ exports.editAd = async (req, res) => {
       return res.status(400).json({ message: 'Failed validation' });
     }
   } catch (err) {
-    // Error occurred
+   
     const path = req.file ? req.file.path : null;
     if(path){
       fs.unlinkSync(path);

@@ -12,9 +12,7 @@ import styles from '../AllPosts/AllAds.module.scss';
 const AllAds = () => {
   const dispatch = useDispatch();
   const ads = useSelector(getAllAds);
-  console.log(ads);
   const requests = useSelector(getRequests);
-  console.log(requests)
 
   useEffect(() => {
     dispatch(loadAdsRequest());

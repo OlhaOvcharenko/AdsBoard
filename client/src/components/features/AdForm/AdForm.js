@@ -17,7 +17,6 @@ const AdForm = ({ action, actionText, author, date, img, ...props }) => {
   const [location, setLocation] = useState(props.location || '');
   const [photo, setPhoto] = useState(null);
   const [descriptionError, setDescriptionError ] = useState(false);
-  const [photoError, setPhotoError ] = useState(false);
 
   const { register, handleSubmit: validate, formState: { errors } } = useForm();
 
@@ -32,7 +31,6 @@ const AdForm = ({ action, actionText, author, date, img, ...props }) => {
   const handleSubmit = () => {
     console.log('edit data');
     setDescriptionError(!description);
-    //setPhotoError(!photo);
     
     if (title && price && location && description) {
       const adData = {
@@ -98,8 +96,7 @@ const AdForm = ({ action, actionText, author, date, img, ...props }) => {
                     accept=".jpeg, .png, .gif"
                     onChange={handleFileChange}
                     type="file"
-                    />
-                    
+                    />   
                 </Form.Group>
 
                 <Form.Group className="mb-4" controlId="floatingTextarea1">

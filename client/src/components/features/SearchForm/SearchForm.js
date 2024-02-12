@@ -7,6 +7,7 @@ import { updateSearchPhrase } from '../../../redux/adsRedux';
 const Search = () => {
  
   const [searchPhrase, setSearchPhrase] = useState('');
+  
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
