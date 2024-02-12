@@ -7,16 +7,17 @@ import Footer from './components/views/Footer/Footer';
 import SearchResult from './components/features/SearchResult/SearchResult'
 import SignIn from './components/pages/SignIn/SignIn';
 import SignUp from './components/pages/SignUp/SignUp';
-import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
 import LogOut from './components/pages/LogOut/LogOut';
-import { fetchUserData } from './redux/userRedux';
 import CreateAd from './components/views/CreateAd/CreateAd';
 import EditAd from './components/views/EditAd/EditAd';
+import Ad from './components/pages/Ad/Ad';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { fetchUserData } from './redux/userRedux';
 import { loadAdsRequest } from './redux/adsRedux';
 import { Button, Spinner } from 'react-bootstrap';
 import { useState } from 'react';
-import Ad from './components/pages/Ad/Ad';
+
 
 const App = () => {
 
@@ -26,10 +27,8 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the necessary data for your application
     Promise.all([dispatch(fetchUserData()), dispatch(loadAdsRequest())])
       .then(() => {
-        // Data has been fetched, so you can stop loading
         setTimeout(() => {
           setLoading(false); 
         }, 1000); 
