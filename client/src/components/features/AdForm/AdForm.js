@@ -30,9 +30,9 @@ const AdForm = ({ action, actionText, author, date, img, ...props }) => {
   };
 
   const handleSubmit = () => {
-
+    console.log('edit data');
     setDescriptionError(!description);
-    setPhotoError(!photo);
+    //setPhotoError(!photo);
     
     if (title && price && location && description) {
       const adData = {
@@ -43,14 +43,10 @@ const AdForm = ({ action, actionText, author, date, img, ...props }) => {
         date,
         author: author._id
       };
-  
-      if (photo) {
-        // If a new photo is selected, pass it along with other data
-        action({...adData, photo});
-      } else {
-        // If no new photo is selected, pass the initial photo value
-        action({...adData, photo: img});
+      if(photo) {
+        adData.photo = photo;
       }
+      action(adData);
     }    
   } 
 
@@ -99,13 +95,11 @@ const AdForm = ({ action, actionText, author, date, img, ...props }) => {
               <Form.Group className="mb-3" controlId="formFile">
                 <Form.Label>Photo:</Form.Label>
                   <Form.Control
-                    {...register("photo", { required: false })}
-                 
                     accept=".jpeg, .png, .gif"
                     onChange={handleFileChange}
                     type="file"
                     />
-                    {photoError && (<small className="d-block form-text text-danger mt-2">Image is required</small>)}
+                    
                 </Form.Group>
 
                 <Form.Group className="mb-4" controlId="floatingTextarea1">

@@ -53,10 +53,9 @@ exports.getBySearchPhrase = async(req, res) => {
 exports.postNewAd = async (req, res) => {
   try {
     const { title, description, date, price, location, author } = req.body;
-    const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
-    if (!req.file) {
-      res.status(400).json({ message: 'Failed file type validation.' });
-      return;
+    const fileType = await getImageFileType(req.file)
+    if (!req.file && fileType === 'unknown') {
+      return res.status(400).json({ message: 'Failed file type validation.' });
     }
    
     const cleanTitle = sanitizeHtml(title);
@@ -66,7 +65,7 @@ exports.postNewAd = async (req, res) => {
     const cleanAuthor = sanitizeHtml(author);
 
     const validatedData = await schemaValidation.validateAsync({cleanTitle, cleanDescription, 
-      cleanLocation, cleanAuthor, cleanDate, price, fileType});
+      cleanLocation, cleanAuthor, cleanDate, price});
     
     if(validatedData) {
       const newAd = new Ad({
@@ -98,26 +97,28 @@ exports.editAd = async (req, res) => {
   const { title, description, date, price, location, author } = req.body;
   
   try {
-    
-    if (!req.file) {
-      return res.status(400).json({ message: 'Failed file type validation.' });
-    }
-    
-    const photo = req.file.filename;
+   
+    const photo = req.file?.filename;
     console.log(photo);
 
     const ad = await Ad.findById({ _id: req.params.id});
-    //console.log(ad)
+    console.log(ad)
     if (!ad) {
       return res.status(404).json({ message: 'Not Found' });
     }
 
-    // Delete previous photo if it exists
+    if(photo) {
     const prevPhotoPath = path.resolve(`public/uploads/${ad.photo}`);
-    if (fs.existsSync(prevPhotoPath)) {
-      fs.unlinkSync(prevPhotoPath);
-    } else {
-      console.error('File does not exist:', prevPhotoPath);
+      if (fs.existsSync(prevPhotoPath)) {
+        fs.unlinkSync(prevPhotoPath);
+      } else {
+        console.error('File does not exist:', prevPhotoPath);
+      }
+
+       const fileType = await getImageFileType(req.file);
+       if(fileType === 'unknown'){
+         return res.status(400).json({message: 'Unsupported file type.'})
+       }
     }
 
     // Sanitize input data
@@ -135,7 +136,7 @@ exports.editAd = async (req, res) => {
       cleanAuthor,
       cleanDate,
       price,
-      fileType: req.file ? await getImageFileType(req.file) : 'unknown'
+      //fileType: photo ? await getImageFileType(req.file) : 'image/png'
     });
 
     console.log(updatedAd);
@@ -145,7 +146,7 @@ exports.editAd = async (req, res) => {
       ad.title = cleanTitle;
       ad.description = cleanDescription;
       ad.date = cleanDate;
-      ad.photo = photo;
+      ad.photo = photo || ad.photo;
       ad.location = cleanLocation;
       ad.author = req.session.user.id;
       ad.price = price;
@@ -163,7 +164,9 @@ exports.editAd = async (req, res) => {
   } catch (err) {
     // Error occurred
     const path = req.file ? req.file.path : null;
-    fs.unlinkSync(path);
+    if(path){
+      fs.unlinkSync(path);
+    }
     console.error('Error updating advertisement:', err);
     return res.status(500).json({ error: 'Internal Server Error', message: err.message });
   }

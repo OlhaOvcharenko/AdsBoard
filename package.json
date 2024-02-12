@@ -30,5 +30,6 @@
     "sass": "1.65.1",
     "scss": "^0.2.4"
   },
+  
   "repository": "https://github.com/OlhaOvcharenko/AdsBoard.git"
 }

@@ -24,7 +24,7 @@ const schemaValidation = Joi.object({
   .required(),
 
   fileType: Joi.string().valid('image/png', 'image/jpeg', 'image/gif')
-  .required(),
+  //.required(),
 });
 
 module.exports = schemaValidation;

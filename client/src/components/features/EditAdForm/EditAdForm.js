@@ -13,9 +13,12 @@ const EditAdForm = () => {
     const adData = useSelector((state) => getAdById(state, id));
 
     const handleSubmit = ad => {
+      console.log('edit 2');
       const adForm = {id: adData._id, ad}
       dispatch(editAdRequest(adForm));
-      navigate('/');
+      setTimeout(() => {
+        navigate('/')
+      },2000);
     };
 
     return (
@@ -23,7 +26,6 @@ const EditAdForm = () => {
         action={handleSubmit}
         actionText='Edit advertisment'
         author={adData.author._id}
-        img={adData.photo}
         {...adData}
       />
 
