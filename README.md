@@ -1,1 +1,1 @@
-https://replit.com/@OlhaOvcharenko/AdsBoard?v=1
+https://replit.com/@OlhaOvcharenko/AdsBoard
