@@ -22,9 +22,6 @@ const schemaValidation = Joi.object({
 
   price: Joi.number()
   .required(),
-
-  fileType: Joi.string().valid('image/png', 'image/jpeg', 'image/gif')
-  //.required(),
 });
 
 module.exports = schemaValidation;
