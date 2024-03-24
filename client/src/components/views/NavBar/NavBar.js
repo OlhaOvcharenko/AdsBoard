@@ -1,23 +1,45 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { getUser} from '../../../redux/userRedux';
+import { getUser, logout} from '../../../redux/userRedux';
 import styles from '../NavBar/NavBar.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAd } from '@fortawesome/free-solid-svg-icons';
+import { API_URL } from '../../../config';
+import { useState } from 'react';
 
 
 const NavBar = () => {
   const user = useSelector(getUser); 
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    setTimeout(() => {
-      navigate('/logout')
-    }, 500);
+  const dispatch =  useDispatch();
+  const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
   
+  const handleSubmit =() => {
+
+    const options = {
+      method: "DELETE",
+    }
+
+    setStatus("loading");
+    fetch(`${API_URL}/auth/logout`, options)
+      .then((res) => {
+        if (res.status === 200) {
+          setStatus("success");
+          dispatch(logout());
+          setTimeout(() => {
+            window.location.reload();
+            navigate('/')
+          }, 2000);
+        } else {
+          setStatus("serverError");
+        }
+      })
+      .catch((err) => {
+        setStatus("serverError");
+      });
   }
 
   return (
@@ -35,20 +57,21 @@ const NavBar = () => {
                 Home
               </Nav.Link>
              
-              {!user && (<Nav.Link as={NavLink} to="/login" className='text-light'>
-                Log in
-              </Nav.Link>)}
-             
-            
-              {user && (
-              <>
-                <Nav.Link as={NavLink} to="/logout" className='text-light' onChange={handleLogout}>
-                  Log out
+              {user && status !== 'success' && (
+                <>
+                  <Nav.Link as={NavLink} to="/logout" className="text-light" onClick={handleSubmit}>
+                    Log out
+                  </Nav.Link>
+                  <Nav.Link as={NavLink} to="/ads" className="text-light">
+                    Create advert
+                  </Nav.Link>
+                </>
+              )}
+
+              {!user && (
+                <Nav.Link as={NavLink} to="/login" className="text-light">
+                  Log in
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/ads" className='text-light'>
-                  Create advert
-                </Nav.Link>
-              </>
               )}
                           
             </Nav>

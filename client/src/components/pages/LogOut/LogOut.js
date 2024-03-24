@@ -4,12 +4,12 @@ import { logout} from "../../../redux/userRedux";
 import { API_URL } from "../../../config";
 import { useNavigate } from "react-router";
 import { Alert } from "react-bootstrap";
-
+import { useState } from "react";
 
 const LogOut = () => {
-  const dispatch = useDispatch();
+  /*const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
 
   useEffect(() => {
     const logoutUser = async () => {
@@ -17,21 +17,23 @@ const LogOut = () => {
         const options = {
           method: 'DELETE',
         };
-        await fetch(`${API_URL}/auth/logout`, options);
-        dispatch(logout());
-        setTimeout(() => {
-          window.location.reload();
-
-          navigate('/')
-        },2000);
-       
+        const res = await fetch(`${API_URL}/auth/logout`, options);
+        if (res.status === 200) {
+          setStatus("success");
+          dispatch(logout());
+        } else {
+          // Handle other status codes if needed
+          setStatus("error");
+        }
       } catch (error) {
         console.error('Error logging out:', error);
+        // Handle error state if necessary
+        setStatus("error");
       }
     };
-
+  
     logoutUser();
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate]);*/
 
   return (
     <Alert>
