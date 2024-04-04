@@ -12,8 +12,7 @@ import { useState } from 'react';
 
 
 const NavBar = () => {
-  const user = useSelector(getUser); 
-  const navigate = useNavigate();
+  const user = useSelector(getUser);
   const dispatch =  useDispatch();
   const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
   
@@ -29,10 +28,6 @@ const NavBar = () => {
         if (res.status === 200) {
           setStatus("success");
           dispatch(logout());
-          setTimeout(() => {
-            window.location.reload();
-            navigate('/')
-          }, 2000);
         } else {
           setStatus("serverError");
         }
@@ -57,7 +52,7 @@ const NavBar = () => {
                 Home
               </Nav.Link>
              
-              {user && status !== 'success' && (
+              {user && status !== "success" && (
                 <>
                   <Nav.Link as={NavLink} to="/logout" className="text-light" onClick={handleSubmit}>
                     Log out
@@ -68,7 +63,7 @@ const NavBar = () => {
                 </>
               )}
 
-              {!user && (
+              {user.currentUser === null && (
                 <Nav.Link as={NavLink} to="/login" className="text-light">
                   Log in
                 </Nav.Link>

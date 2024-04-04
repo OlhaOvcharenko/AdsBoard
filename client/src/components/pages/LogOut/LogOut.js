@@ -5,13 +5,13 @@ import { API_URL } from "../../../config";
 import { useNavigate } from "react-router";
 import { Alert } from "react-bootstrap";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const LogOut = () => {
-  /*const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
 
-  useEffect(() => {
+  /*useEffect(() => {
     const logoutUser = async () => {
       try {
         const options = {
@@ -38,6 +38,7 @@ const LogOut = () => {
   return (
     <Alert>
       <Alert.Heading>You have been logged out!</Alert.Heading>
+      <Link to="/">Come back home</Link>
     </Alert>
   )
 };
