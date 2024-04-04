@@ -16,8 +16,7 @@ const NavBar = () => {
   const dispatch =  useDispatch();
   const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError', 'loginError'
   
-  const handleSubmit =() => {
-
+  const handleSubmit = () => {
     const options = {
       method: "DELETE",
     }
@@ -52,7 +51,7 @@ const NavBar = () => {
                 Home
               </Nav.Link>
              
-              {user && status !== "success" && (
+              {user && user.currentUser !== null && status !== "success" && (
                 <>
                   <Nav.Link as={NavLink} to="/logout" className="text-light" onClick={handleSubmit}>
                     Log out
@@ -63,7 +62,7 @@ const NavBar = () => {
                 </>
               )}
 
-              {user.currentUser === null && (
+              {(user === null || user.currentUser === null) && (
                 <Nav.Link as={NavLink} to="/login" className="text-light">
                   Log in
                 </Nav.Link>
